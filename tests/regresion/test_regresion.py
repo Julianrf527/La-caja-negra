@@ -70,8 +70,8 @@ def test_regresion_contra_experimentos(capsys, monkeypatch):
             r = client.request(e.get("metodo", "POST"), e.get("ruta", "/msg"), content=cuerpo, headers=_cabeceras(e))
             if e["id"] in EXCLUIDOS:
                 continue
-            if (e.get("metodo"), e.get("ruta")) == ("GET", "/health") and e["status"] == 401:
-                sin_token_health.append(e["id"])  # /health es público por contrato; el original daba 401
+            if (e.get("metodo"), e.get("ruta")) in (("GET", "/health"), ("POST", "/__reset")) and e["status"] == 401:
+                sin_token_health.append(e["id"])  # /health y /__reset son públicos por contrato; el original daba 401
                 continue
             comparados += 1
             if not _iguales(e["response"], e["status"], r):
@@ -79,7 +79,7 @@ def test_regresion_contra_experimentos(capsys, monkeypatch):
 
     pct = 100 * (comparados - len(fallos)) / comparados
     with capsys.disabled():
-        print(f"\nREGRESIÓN: {comparados - len(fallos)}/{comparados} coinciden ({pct:.2f} %); excluidos: {sorted(EXCLUIDOS)}; GET /health sin token (público por contrato, 200): {len(sin_token_health)} líneas omitidas")
+        print(f"\nREGRESIÓN: {comparados - len(fallos)}/{comparados} coinciden ({pct:.2f} %); excluidos: {sorted(EXCLUIDOS)}; GET /health y POST /__reset sin token válido (públicos por contrato, 200): {len(sin_token_health)} líneas omitidas")
         print("ids que fallan:", [e["id"] for e, _ in fallos])
         for e, r in fallos[:40]:
             req = e["request"]["m"] if isinstance(e["request"], dict) and "m" in e["request"] else str(e["request"])[:60]
