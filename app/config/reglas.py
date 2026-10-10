@@ -125,6 +125,17 @@ PERFILES: dict[str, dict] = {
         "sugerencia": {"clave": "sugerencia", "desempate": "alfabetico"},  # confirmado: #3797-#3811
         "cabecera_contador": "X-Req",
     },
+    # v2: el original cambió durante el día (FR-0153). Hereda v1 y solo sobrescribe los 3 cambios
+    # confirmados contra el original. Evidencia en experimentos.jsonl ("FR-0153 v2 confirmado").
+    "v2": {
+        "hereda": "v1",
+        # 1) Límite de TRANSFER baja de 100000 a 50000 (50000 pasa, 50001 E506).
+        "limites": {"limite_transfer": 50000},
+        # 2) E510 pasa de 409 a 423 y añade el campo "intentos" (nº de E510 seguidos de la cuenta origen).
+        "errores": {"E510": {"status": 423, "campo_contador": "intentos"}},
+        # 3) CONSULTA devuelve el saldo como texto con 2 decimales = saldo/100 (ej. 12345 -> "123.45").
+        "respuestas": {"saldo": {"formato_saldo": {"escala": 100, "decimales": 2}}},
+    },
 }
 
 PERFIL_POR_DEFECTO = settings.VERSION_POR_DEFECTO

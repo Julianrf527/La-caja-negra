@@ -24,6 +24,7 @@ def handler(c: Contexto):
     # Todo depósito a la cuenta la desbloquea y reinicia su contador de fallos (confirmado: #3716-#3723).
     cuenta.bloqueada = False
     cuenta.fallos_seguidos = 0
+    cuenta.intentos_bloqueo = 0  # v2: el próximo ciclo de bloqueo cuenta intentos desde 1
     _, prefijo_op, ancho = ids(c)
     op = c.estado.nueva_operacion(Operacion("deposito", None, c.args[0], monto), prefijo_op, ancho)
     return Exito("operacion_recibida", {"id": op})
