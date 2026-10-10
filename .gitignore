@@ -1,0 +1,14 @@
+# Secretos
+.env
+.env.*
+
+# Entorno virtual de Python
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Lock del log de experimentos
+*.jsonl.lock
