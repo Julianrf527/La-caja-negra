@@ -1,6 +1,6 @@
 """Reemplazo de «La caja negra». Una ruta comodín recibe todo; el router y la auth se resuelven a mano.
 
-Orden: E404 (ruta) → E001 (auth) → /health y /__reset salen directo → /msg entra al pipeline.
+Orden: E404 (ruta) → /health (pública, responde ya) → E001 (auth) → /__reset sale directo → /msg entra al pipeline.
 Sin red saliente: este módulo no importa ningún cliente HTTP.
 """
 
@@ -70,10 +70,10 @@ async def comodin(request: Request, path: str) -> Response:
         else:
             token = _token_de(request, perfil)
             token_valido = token is not None
-            if token is None:
+            if destino in perfil["rutas_publicas"]:  # /health: antes de la auth, no depende del header
+                salida = compat.estatica(destino, perfil)
+            elif token is None:
                 salida = compat.error("E001", perfil)
-            elif destino == "health":
-                salida = compat.estatica("health", perfil)
             elif destino == "reset":
                 almacen.reset(token)
                 salida = compat.estatica("reset", perfil)
