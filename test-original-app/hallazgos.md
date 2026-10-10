@@ -1,8 +1,12 @@
-# Hallazgos sobre el servicio original
+# Especificación del servicio «La caja negra»
 
-Evidencia = `id` de `experimentos.jsonl`. Confianza: **C** confirmado (se repite), **P** probable (una vez o inferido), **S** supuesto (no probado).
-Un rango `a–b` significa que todas esas líneas muestran el mismo comportamiento.
-Pruebas del 2026-10-10, 15:50–16:40 UTC. Esta fase gastó ~1.360 requests.
+Documento que permite reimplementar el servicio sin tocar el original. Cada comportamiento lleva un ID, su
+descripción, la evidencia y la confianza. **Evidencia** = `id` de `experimentos.jsonl` (`a–b` = todas esas
+líneas muestran el mismo comportamiento). **Confianza:** **C** confirmado (se repite), **P** probable (visto
+una vez o inferido), **S** supuesto (no probado; es lo que hace el reemplazo por defecto).
+
+Pruebas del 2026-10-10. El servicio cambió una vez durante la tarde (ver sección 6, «Cambios durante el día»):
+las secciones 1–5 describen el comportamiento base; la 6 recoge los tres cambios de esa versión posterior.
 
 ## 1. Entrada
 
@@ -26,7 +30,7 @@ Formato de `m`: `COMANDO;arg1;…;control`. El último segmento es el control.
 
 | ID | Comportamiento | Evidencia | Confianza |
 | --- | --- | --- | --- |
-| IN-01 | Fórmula del control: tomar el mensaje sin el último `;control`, pasarlo a mayúsculas, cambiar letras por su posición en el alfabeto (A=1…Z=26), dejar los dígitos, ignorar lo demás; concatenar en un entero N; `control = (1 − 3·N) mod 97`. Implementada en `helper/control.py`; coincide con las 17 líneas no-PING de ejemplos.jsonl y con todas las firmadas en esta fase. | 4–23, 1838–1857, 2445–2496 | C |
+| IN-01 | Construcción de N: tomar el mensaje sin el último `;control`, pasarlo a mayúsculas (solo A–Z), cambiar cada letra por su posición en el alfabeto (A=1…Z=26), dejar los dígitos, ignorar lo demás; concatenar en un entero N. La fórmula exacta del control a partir de N está en IN-02. Coincide con las 17 líneas no-PING de ejemplos.jsonl y con todas las firmadas en esta fase. | 4–23, 1838–1857, 2445–2496 | C |
 | IN-02 | Fórmula completa: `control = 98 − ((3·N) mod 97)` (ISO 7064 MOD 97-10), de 2 a 98; equivale a `(1 − 3N) mod 97` con 0→97, salvo N múltiplo de 97 (ver IN-03). Con 0, 00 o 1 responde E202. | 1661–1663, 1726 | C |
 | IN-03 | **Corrección (antes decía que no había control válido):** si N es múltiplo de 97 (p. ej. `RETIRA`, `ALTA;HD`, `ALTA;KY`, `ÑÑ`), el control válido es **98**. Los barridos anteriores solo probaron 0–97, por eso parecía imposible. | 5076, 5553–5559 | C |
 | IN-04 | El control se compara como texto de 1 o 2 dígitos, sin signo ni cero a la izquierda: `02` → E202 aunque el valor sea 2. Más de 2 dígitos, signo, espacio, punto, hexadecimal, unicode o letras → E201 `control mal formado`. | 1711–1721, 1664, 1725, 285 | C |
@@ -46,11 +50,11 @@ Aridad = número de argumentos sin contar el control.
 | --- | --- | --- | --- |
 | CM-01 | **PING** (0 args): 200 `{"pong":true}`. Con argumentos: E302. | 33, 1649, 1841 | C |
 | CM-02 | **ALTA;nombre** (1 arg): 201 `{"cuentaId":"AC-0001"}`. No valida el nombre: acepta números, espacios, acentos, signos, 300 caracteres y ids falsos; acepta nombres repetidos y crea cuenta nueva. 0 o ≥2 args → E302. | 1846–1857 | C |
-| CM-03 | **CONSULTA;cuenta** (1 arg): 200 `{"cuenta_id":"AC-0001","saldo":N}` (`cuenta_id` con guion bajo; ALTA usa `cuentaId`). El id debe ser exacto `AC-NNNN` (4 dígitos, mayúsculas); `ac-0001`, `AC-1`, `AC-00001`, ` AC-0001`, `OP-0001`, `0001` → 404 E401 `cuenta inexistente`. 0 o ≥2 args → E302. | 1863–1877, 2449 | C |
+| CM-03 | **CONSULTA;cuenta** (1 arg): 200 `{"cuenta_id":"AC-0001","saldo":N}` (`cuenta_id` con guion bajo; ALTA usa `cuentaId`). El id debe ser exacto `AC-NNNN` (4 dígitos, mayúsculas); `ac-0001`, `AC-1`, `AC-00001`, ` AC-0001`, `OP-0001`, `0001` → 404 E401 `cuenta inexistente`. 0 o ≥2 args → E302. **El formato del `saldo` cambió en v2 a texto con 2 decimales (ver CA-02).** | 1863–1877, 2449 | C |
 | CM-04 | **DEPOSITO;cuenta;monto** (2 args): 200 `{"status":"recieved","operacionId":"OP-0001"}` (con la errata `recieved`). Aplica el saldo al instante. Monto válido = entero positivo sin signo, sin ceros a la izquierda y sin espacios. 0, negativos, decimales, comas, `1e3`, `007`, `+5`, hex, `1_000`, dígitos árabes y valores ≥ 10^10 → E303 `monto inválido`. Tope por request: 9.999.999.999. Cuenta inexistente → E401. 0, 1 o ≥3 args → E302. | 1882–1900, 1943–1984, 2501 | C |
 | CM-05 | DEPOSITO no tiene tope acumulado ni por número de operaciones (15 depósitos de 100000; saldo de 334.495.967.279). | 1985, 1989–2004 | C |
 | CM-06 | **TRANSFER;origen;destino;monto** (3 args): 200 `{"status":"recieved","operacionId":"OP-000N"}`. Monto con las mismas reglas que DEPOSITO (E303). `origen = destino` → 400 E304 `origen y destino iguales`. Origen o destino inexistente → E401. 0–2 o ≥4 args → E302. | 1907–1922 | C |
-| CM-07 | TRANSFER: monto > 100.000 → 422 E506 `límite excedido` (100.000 pasa, 100.001 falla), con cualquier saldo, sin tope acumulado (10 transferencias de 100.000 pasan). | 2055, 2056, 2011, 2587–2657, 2071–2081 | C |
+| CM-07 | TRANSFER: monto por encima del límite → 422 E506 `límite excedido`, con cualquier saldo, sin tope acumulado. El límite era 100.000 en v1 (100.000 pasa, 100.001 falla) y **bajó a 50.000 en v2 (ver CA-03).** | 2055, 2056, 2011, 2587–2657, 2071–2081 | C |
 | CM-08 | TRANSFER: si origen y destino tienen **exactamente el mismo nombre de titular** no se aplica el límite E506 y se llega a la comprobación de saldo. (`Ana→Ana`, `Beto→Beto`, `123→123` pasan 120.000 y 2.000.000; `Ana→ana`, `Ana→ANA`, `Ana→Anb`, `Ana→Ana Maria`, `Ana→Beto` dan E506. Con saldo 10, `Ana→Ana` 999999999 da E507.) | 2487, 2666, 2677, 2706–2749, 2754–2762, 2672, 2683 | C |
 | CM-09 | TRANSFER: saldo insuficiente → 422 E507 `saldo insuficiente`; no hay sobregiro. | 1921, 2524, 2754 | C |
 | CM-10 | **ANULA;operación** (1 arg): 200 `{"ok":true,"anulada":"OP-0003"}`. Operación inexistente o mal formada (`op-0002`, `OP-2`, `0002`, `OP-0000`, id de cuenta) → 404 E402 `operación inexistente`. Segunda anulación → 200 `{"ok":false,"motivo":"ya anulada"}`. 0 o ≥2 args → E302. | 1928–1937, 2454, 2507, 2541 | C |
@@ -73,7 +77,7 @@ Aridad = número de argumentos sin contar el control.
 | ME-03 | Contador de operaciones `OP-0001`…: solo lo consumen DEPOSITO y TRANSFER exitosos. No lo consumen los errores (E401, E303, E304, E506, E507, E510) ni ANULA, CONSULTA, PING, ALTA. | 2484–2496, 2457 | C |
 | ME-04 | El saldo cambia al instante (aunque diga `recieved`) y no cambia con el tiempo. | 2500–2502 | C |
 | ME-05 | Tras reset los contadores vuelven a `AC-0001` y `OP-0001`. | 2503–2507 | C |
-| ME-06 | **Bloqueo (E510)**: tras 3 fallos 422 seguidos (E506 o E507, mezclables) en TRANSFER desde la misma cuenta origen, el siguiente TRANSFER desde ella da 409 `{"error":"E510","mensaje":"cuenta bloqueada"}`. Con 2 fallos no bloquea. | 2139–2142, 2305–2308, 2313–2315 | C |
+| ME-06 | **Bloqueo (E510)**: tras 3 fallos 422 seguidos (E506 o E507, mezclables) en TRANSFER desde la misma cuenta origen, el siguiente TRANSFER desde ella da E510 `cuenta bloqueada`. Con 2 fallos no bloquea. En v1 el status era 409 sin más campos; **en v2 es 423 y añade `intentos` (ver CA-04).** | 2139–2142, 2305–2308, 2313–2315 | C |
 | ME-07 | Un TRANSFER exitoso de esa cuenta reinicia el contador de fallos. | 2235–2240 | C |
 | ME-08 | Solo cuentan E506 y E507. No cuentan E401, E303, E304, E302 ni E202 (5 seguidos y la cuenta sigue operando). | 2180–2185, 2191–2196, 2202–2207, 2213–2218, 2224–2229 | C |
 | ME-09 | El contador es por cuenta origen: fallos de otra cuenta, o CONSULTA entre medio, no lo alteran, y las demás cuentas no se bloquean. | 2246–2252, 2259–2263 | C |
@@ -87,7 +91,7 @@ Aridad = número de argumentos sin contar el control.
 
 | ID | Comportamiento | Evidencia | Confianza |
 | --- | --- | --- | --- |
-| ER-01 | Catálogo (status código `mensaje`): 401 E001 `no autorizado`; 404 E404 `ruta desconocida`; 400 E100 `json inválido`; 413 E101 `cuerpo demasiado grande`; 400 E102 `falta m`; 400 E103 `falta control`; 400 E104 `segmento vacío`; 400 E201 `control mal formado`; 400 E202 `control inválido`; 400 E301 `comando desconocido ` (con espacio final y `sugerencia` opcional); 400 E302 `aridad inválida`; 400 E303 `monto inválido`; 400 E304 `origen y destino iguales`; 404 E401 `cuenta inexistente`; 404 E402 `operación inexistente`; 422 E506 `límite excedido`; 422 E507 `saldo insuficiente`; 409 E510 `cuenta bloqueada`; 409 E520 `operación destructiva: detiene el servicio; reenvía con confirmación`; 503 E599 `service halted`. | 108, 237, 258, 239, 245, 264, 285, 284, 1495, 1846, 1886, 1910, 1865, 1930, 2011, 1921, 2142, 1652, 1565 | C |
+| ER-01 | Catálogo (status código `mensaje`): 401 E001 `no autorizado`; 404 E404 `ruta desconocida`; 400 E100 `json inválido`; 413 E101 `cuerpo demasiado grande`; 400 E102 `falta m`; 400 E103 `falta control`; 400 E104 `segmento vacío`; 400 E201 `control mal formado`; 400 E202 `control inválido`; 400 E301 `comando desconocido ` (con espacio final y `sugerencia` opcional); 400 E302 `aridad inválida`; 400 E303 `monto inválido`; 400 E304 `origen y destino iguales`; 404 E401 `cuenta inexistente`; 404 E402 `operación inexistente`; 422 E506 `límite excedido`; 422 E507 `saldo insuficiente`; E510 `cuenta bloqueada` (409 en v1, 423 en v2 con campo `intentos`, ver CA-04); 409 E520 `operación destructiva: detiene el servicio; reenvía con confirmación`; 503 E599 `service halted`. | 108, 237, 258, 239, 245, 264, 285, 284, 1495, 1846, 1886, 1910, 1865, 1930, 2011, 1921, 2142, 1652, 1565 | C |
 | ER-02 | E100: cuerpo vacío, JSON roto o texto plano. | 237, 238, 249 | C |
 | ER-03 | E102 `falta m`: cuerpo `null`, lista, `{}`, string JSON, `m` numérico/null/lista, clave `M` en mayúscula. `m` string vacío → E103. | 239–244, 246, 248, 245 | C |
 | ER-04 | Orden global observado: E404 (ruta) → E001 → E599 (detenido) → E101 → E100 → E102 → E103 → E104 → E201 → E202 → E301 → E302 → reglas del comando. | 111, 2546–2556, 1644–1647, 2814, 284, 2512 | P |
@@ -101,12 +105,20 @@ Aridad = número de argumentos sin contar el control.
 
 ## 6. Cambios durante el día
 
+El servicio cambió una vez durante la tarde (la «v2»). Hasta ~20:26 UTC se comportaba como describen las
+secciones 1–5 (la «v1»); a partir de ese punto aparecieron tres cambios, detectados al reproducir contra el
+original las secuencias capturadas del evaluador y confirmados con pruebas dirigidas. El corte se ve en el log:
+el contador `X-Req` vuelve a 1 (reinicio del proceso) alrededor de #7145 y el primer comportamiento v2 observado
+es #7152. Antes de #7152 no hay ninguna respuesta v2; desde #7152, todas.
+
 | ID | Comportamiento | Evidencia | Confianza |
 | --- | --- | --- | --- |
-| CA-01 | Los 20 ejemplos de la mañana se reprodujeron idénticos a las 15:51 UTC y de nuevo a las ~16:28 UTC (0 diferencias). | 4–23, 2563–2582 | C |
-| CA-02 | No se detectó ningún cambio de status ni de cuerpo en la sesión. | 2563–2582 | P |
-| CA-03 | HALT, NOTAS y la exención de titulares iguales existen en esta sesión; los ejemplos de la mañana no los usan, así que no se sabe si ya estaban. | 1563, 2821, 2706 | S |
-| CA-04 | Falta repetir `python test-original-app/explorar_fase2.py cambios` antes de las 20:00. | — | S |
+| CA-01 | Los 20 ejemplos de la mañana se reprodujeron idénticos a las 15:51 y ~16:28 UTC (0 diferencias): hasta ahí, sin cambios. | 4–23, 2563–2582 | C |
+| CA-02 | **Cambio 1 — saldo decimal.** CONSULTA pasa a devolver el `saldo` como **texto con 2 decimales** = saldo/100 (0→`"0.00"`, 12345→`"123.45"`, -1→`"-0.01"`). Antes era un entero (CM-03). ALTA, DEPOSITO, TRANSFER, ANULA y los montos de entrada no cambian. | 7152, 7329, 7337, 7485–7513 | C |
+| CA-03 | **Cambio 2 — límite de TRANSFER.** Baja de 100.000 a **50.000** (50.000 pasa, 50.001 → E506). El resto del límite igual: exención de mismo titular, orden E506<E507, mensaje y bloqueo sin cambios. | 7156, 7252, 7285, 7519, 7544 | C |
+| CA-04 | **Cambio 3 — E510.** Pasa de status 409 a **423** y añade el campo **`intentos`** = nº de E510 seguidos de la cuenta origen (1, 2, 3…). No lo suben E401, E303, E304 ni CONSULTA; se reinicia a 1 al desbloquear con depósito; es por cuenta. Umbral (3) y orden (E510 antes de E506, después de E401/E304/E303) sin cambios. | 7297, 7420, 7570–7574, 7583, 7588, 7596–7603 | C |
+| CA-05 | No se detectó ningún otro cambio: todas las demás líneas v2 (saldos negativos, reversas, contadores, bloqueo, titular, errores y su orden) coinciden con las secciones 1–5. | 5669–7603 (replay y diferencial) | C |
+| CA-06 | HALT, NOTAS y la exención de titulares iguales ya existían antes del cambio; los ejemplos de la mañana no los usan, así que no se sabe si venían de más atrás. | 1563, 2821, 2706 | S |
 
 ## 7. Riesgos
 
