@@ -1,6 +1,6 @@
 # Documento de diseño · Reemplazo de «La caja negra»
 
-> **En una frase:** vamos a construir en Python (FastAPI) y desplegar en Railway un servicio que se comporta **exactamente igual** que un sistema heredado sin documentación, errores y rarezas incluidos, y que pueda adaptarse rápido si el original cambia durante el día.
+> **En una frase:** se construye en Python (FastAPI) y se despliega en Railway un servicio que se comporta **exactamente igual** que un sistema heredado sin documentación, errores y rarezas incluidos, y que pueda adaptarse rápido si el original cambia durante el día.
 
 | | |
 |---|---|
@@ -13,22 +13,22 @@
 
 ## 1. El problema
 
-Heredamos un servicio que lleva 10 años en producción. No hay código fuente, ni documentación, ni nadie que sepa qué hace. Solo sabemos que recibe mensajes por HTTP y responde, y que si se apaga la empresa se cae.
+Se hereda un servicio que lleva 10 años en producción. No hay código fuente, ni documentación, ni nadie que sepa qué hace. Solo se sabe que recibe mensajes por HTTP y responde, y que si se apaga la empresa se cae.
 
-Nuestro trabajo es **entenderlo desde fuera** (mandándole mensajes y observando qué responde) y **construir un reemplazo indistinguible**. Que sea indistinguible significa también copiar sus errores: si el original responde `"recieved"` con una errata, el nuestro también.
+El trabajo consiste en **entenderlo desde fuera** (mandándole mensajes y observando qué responde) y **construir un reemplazo indistinguible**. Que sea indistinguible significa también copiar sus errores: si el original responde `"recieved"` con una errata, el reemplazo también.
 
 Restricciones que marcan el diseño:
 
 - El reemplazo **no puede llamar al original**. Tiene que saber responder por sí mismo.
 - Cada respuesta debe llegar en **menos de 5 segundos**.
-- El original **puede cambiar durante el día**, y nos evalúan contra la versión de las 20:00.
+- El original **puede cambiar durante el día**, y la evaluación se hace contra la versión de las 20:00.
 - Los tests son **secuencias de hasta 12 mensajes**: el servicio recuerda lo que pasó en mensajes anteriores.
 
 ---
 
 ## 2. Qué hace el servicio original
 
-Tras unos 2.800 experimentos, sabemos que es un **pequeño banco que funciona por mensajes de texto**.
+Tras unos 2.800 experimentos, se sabe que es un **pequeño banco que funciona por mensajes de texto**.
 
 ### 2.1 Cómo se le habla
 
@@ -54,7 +54,7 @@ Las órdenes llegan como un texto con campos separados por `;`:
 
 El último campo es un **dígito de control**, como el de una cuenta bancaria o un IBAN. Sirve para detectar mensajes corruptos: si no cuadra, el servicio rechaza el mensaje.
 
-Descubrimos la fórmula. En palabras: se toma el mensaje sin el control, se cambian las letras por su posición en el alfabeto (A=1, B=2…), se ignoran los símbolos, se forma un número N, y el control es `(1 − 3·N) mod 97`. La fórmula coincide con más de 1.100 mensajes del log sin ninguna excepción.
+La fórmula ya está descifrada. En palabras: se toma el mensaje sin el control, se cambian las letras por su posición en el alfabeto (A=1, B=2…), se ignoran los símbolos, se forma un número N, y el control es `(1 − 3·N) mod 97`. La fórmula coincide con más de 1.100 mensajes del log sin ninguna excepción.
 
 ### 2.3 Los comandos
 
@@ -69,7 +69,7 @@ Descubrimos la fórmula. En palabras: se toma el mensaje sin el control, se camb
 | **HALT** *(oculto)* | Detiene el servicio hasta el siguiente reset. Pide confirmación | `HALT;1;…` |
 | **NOTAS** *(oculto)* | Devuelve una lista fija de notas internas | `NOTAS;…` |
 
-Los dos últimos no aparecían en los ejemplos. Los encontramos porque, cuando un comando no existe, el servicio **sugiere el más parecido** (por ejemplo, `HELP` → «¿quisiste decir HALT?»).
+Los dos últimos no aparecían en los ejemplos. Se encontraron porque, cuando un comando no existe, el servicio **sugiere el más parecido** (por ejemplo, `HELP` → «¿quisiste decir HALT?»).
 
 ### 2.4 Lo que recuerda entre mensajes
 
@@ -87,7 +87,7 @@ Por cada token, el servicio guarda:
 
 ## 3. Cómo viaja un mensaje
 
-Cada mensaje pasa por una serie de controles **en un orden fijo**. El primero que falla decide la respuesta. Ese orden importa tanto como los propios errores: si un mensaje tiene dos fallos, el original solo reporta uno, y nosotros tenemos que reportar el mismo.
+Cada mensaje pasa por una serie de controles **en un orden fijo**. El primero que falla decide la respuesta. Ese orden importa tanto como los propios errores: si un mensaje tiene dos fallos, el original solo reporta uno, y el reemplazo tiene que reportar el mismo.
 
 ```
  1. ¿La ruta existe?                → si no: 404 E404 ruta desconocida
@@ -117,7 +117,7 @@ La tabla completa de códigos, mensajes exactos y el orden dentro de cada comand
 | Pieza | Responsabilidad |
 |---|---|
 | **Railway** | Mantiene la app encendida, con una sola copia, y la redespliega sola en cada cambio |
-| **Ruta comodín** | Una única puerta de entrada que recibe cualquier método y ruta, para decidir nosotros qué responder |
+| **Ruta comodín** | Una única puerta de entrada que recibe cualquier método y ruta, para que el reemplazo decida qué responder |
 | **Router y auth** | Distingue `/msg`, `/health`, `/__reset` y «desconocida», y valida el token |
 | **Pipeline de validación** | Los pasos 3 a 10 del recorrido, en el orden exacto del original |
 | **Comandos** | Un módulo por comando, con sus propias reglas de negocio |
@@ -145,13 +145,13 @@ tests/            control, orden de errores y regresión contra el log
 ## 5. Decisiones y por qué
 
 **¿Por qué Python con FastAPI?**
-Es rápido de escribir, el equipo ya lo usa y toda la exploración (incluida la fórmula del control) ya está en Python. Las respuestas tardan milisegundos, muy lejos del límite de 5 segundos.
+Es rápido de escribir y toda la exploración (incluida la fórmula del control) ya está en Python. Las respuestas tardan milisegundos, muy lejos del límite de 5 segundos.
 
-**¿Por qué desactivamos las «ayudas» de FastAPI?**
-FastAPI trae de serie páginas de documentación (`/docs`), validación automática del cuerpo y sus propios mensajes de error. El original no tiene nada de eso: en `/docs` responde «ruta desconocida» y sus errores tienen otro formato. Si las dejáramos activas, fallaríamos tests. Por eso leemos el cuerpo «en crudo» y lo validamos a mano, en el mismo orden que el original.
+**¿Por qué se desactivan las «ayudas» de FastAPI?**
+FastAPI trae de serie páginas de documentación (`/docs`), validación automática del cuerpo y sus propios mensajes de error. El original no tiene nada de eso: en `/docs` responde «ruta desconocida» y sus errores tienen otro formato. Si se dejaran activas, fallarían tests. Por eso el cuerpo se lee «en crudo» y se valida a mano, en el mismo orden que el original.
 
 **¿Por qué una sola ruta comodín en vez de una ruta por endpoint?**
-Con rutas separadas, FastAPI respondería por su cuenta a métodos o rutas que no reconoce (con un 405 o un 404 propios). Con una única puerta controlamos la respuesta en todos los casos, incluido `HEAD`, que en el original devuelve 404 con cuerpo vacío.
+Con rutas separadas, FastAPI respondería por su cuenta a métodos o rutas que no reconoce (con un 405 o un 404 propios). Con una única puerta se controla la respuesta en todos los casos, incluido `HEAD`, que en el original devuelve 404 con cuerpo vacío.
 
 **¿Por qué guardar el estado en memoria y no en una base de datos?**
 El estado es pequeño, cada test empieza con un reset y no hace falta que sobreviva a un reinicio. Una base de datos añadiría latencia y piezas que pueden fallar sin aportar nada.
@@ -160,23 +160,23 @@ El estado es pequeño, cada test empieza con un reset y no hace falta que sobrev
 Como el estado vive en memoria, dos copias de la app tendrían dos estados distintos: una cuenta abierta en una no existiría en la otra. El propio reto lo advierte.
 
 **¿Por qué Railway?**
-Mantiene la app siempre encendida (sin «despertar» lento), con una sola copia, y despliega solo desde GitHub en un par de minutos. Descartamos estas alternativas:
+Mantiene la app siempre encendida (sin «despertar» lento), con una sola copia, y despliega solo desde GitHub en un par de minutos. Alternativas descartadas:
 - **Serverless** (Vercel, Lambda): cada petición puede caer en una instancia nueva y se pierde el estado.
 - **Render gratis:** se duerme por inactividad y el primer request puede tardar más de 5 segundos.
 - **Un portátil con ngrok:** debe funcionar hasta el demo day y depende de que ese equipo siga encendido.
 
 **¿Por qué las reglas van en un archivo de configuración?**
-Porque el original va a cambiar y no sabemos qué. Si cambia un mensaje, un límite o el orden de validación, editamos una línea y desplegamos, sin tocar la lógica.
+Porque el original va a cambiar y no se sabe qué. Si cambia un mensaje, un límite o el orden de validación, basta con editar una línea y desplegar, sin tocar la lógica.
 
 **¿Por qué una capa de compatibilidad aparte?**
-Para que las rarezas que copiamos a propósito (sección 6) no se mezclen con la lógica del banco. Así es fácil revisarlas y, en un futuro sistema real, corregirlas.
+Para que las rarezas que se copian a propósito (sección 6) no se mezclen con la lógica del banco. Así es fácil revisarlas y, en un futuro sistema real, corregirlas.
 
-**¿Por qué usamos el log de experimentos como tests?**
-Ya tenemos unos 2.800 casos reales del original, con su respuesta exacta. Reproducirlos contra nuestro reemplazo nos dice cuánto acertamos antes de validar en `/evento`, sin escribir tests a mano.
+**¿Por qué usar el log de experimentos como tests?**
+El log ya tiene unos 2.800 casos reales del original, con su respuesta exacta. Reproducirlos contra el reemplazo indica cuánto acierta antes de validar en `/evento`, sin escribir tests a mano.
 
 ---
 
-## 6. Rarezas que copiamos a propósito
+## 6. Rarezas que se copian a propósito
 
 En un sistema nuevo serían bugs. Aquí forman parte del contrato:
 
@@ -188,28 +188,28 @@ En un sistema nuevo serían bugs. Aquí forman parte del contrato:
 
 La lista completa, con evidencia, está en el [anexo, sección 6](anexo-referencia-tecnica.md#6-capa-de-compatibilidad).
 
-> **Sobre NOTAS:** la nota que devuelve contiene una instrucción para llamar a un endpoint interno con el token. La tratamos **solo como texto**: el reemplazo la devuelve tal cual y no implementa ninguna acción asociada. Durante la exploración tampoco se ejecutó.
+> **Sobre NOTAS:** la nota que devuelve contiene una instrucción para llamar a un endpoint interno con el token. Se trata **solo como texto**: el reemplazo la devuelve tal cual y no implementa ninguna acción asociada. Durante la exploración tampoco se ejecutó.
 
 ---
 
 ## 7. Si el original cambia durante el día
 
-No sabemos qué va a cambiar, así que el diseño apuesta por **enterarse pronto y reaccionar rápido**.
+No se sabe qué va a cambiar, así que el diseño apuesta por **enterarse pronto y reaccionar rápido**.
 
-1. **Detectar.** Cada hora reproducimos los 20 ejemplos contra el original (unas 21 peticiones). Si algo responde distinto, sabemos qué cambió y a qué hora. Hasta ahora no hay diferencias.
-2. **Entender.** Probamos el cambio a mano y lo registramos en el log con su hipótesis.
-3. **Adaptar.** Si es una regla (mensaje, límite, orden), editamos `reglas.py`. Si es un comportamiento nuevo, añadimos un handler.
-4. **Verificar y publicar.** Pasamos la regresión, hacemos merge a `main` y Railway despliega solo.
-5. **Documentar.** Anotamos qué cambió, desde cuándo y cómo lo detectamos (sección «Cambios durante el día» de la especificación).
+1. **Detectar.** Cada hora se reproducen los 20 ejemplos contra el original (unas 21 peticiones). Si algo responde distinto, queda claro qué cambió y a qué hora. Hasta ahora no hay diferencias.
+2. **Entender.** Se prueba el cambio a mano y se registra en el log con su hipótesis.
+3. **Adaptar.** Si es una regla (mensaje, límite, orden), se edita `reglas.py`. Si es un comportamiento nuevo, se añade un handler.
+4. **Verificar y publicar.** Se pasa la regresión, se hace merge a `main` y Railway despliega solo.
+5. **Documentar.** Se anota qué cambió, desde cuándo y cómo se detectó (sección «Cambios durante el día» de la especificación).
 
-**Punto débil conocido:** los 20 ejemplos no cubren HALT, NOTAS, los bloqueos ni la excepción del mismo titular. Vamos a añadir al monitor unos pocos casos de esas reglas.
+**Punto débil conocido:** los 20 ejemplos no cubren HALT, NOTAS, los bloqueos ni la excepción del mismo titular. Se añadirán al monitor unos pocos casos de esas reglas.
 
 ---
 
-## 8. Cómo vamos a probarlo
+## 8. Cómo se va a probar
 
 - **Tests unitarios:** la fórmula del control, el orden de los errores y las reglas de estado (contadores, bloqueos, anulaciones, reset).
-- **Regresión contra el log:** reproducimos `experimentos.jsonl` contra el reemplazo y comparamos status y cuerpo con las mismas reglas que usa el reto. La meta es el 100 % de coincidencia, y cualquier diferencia se investiga contra el original antes de «arreglar» nada.
+- **Regresión contra el log:** se reproduce `experimentos.jsonl` contra el reemplazo y se comparan status y cuerpo con las mismas reglas que usa el reto. La meta es el 100 % de coincidencia, y cualquier diferencia se investiga contra el original antes de «arreglar» nada.
 - **Después de cada despliegue:** `/health`, reset y los 20 ejemplos contra la URL pública, y validación en `/evento`.
 
 ---
@@ -222,13 +222,13 @@ No sabemos qué va a cambiar, así que el diseño apuesta por **enterarse pronto
 4. Comando de inicio: `uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1`
 5. Generar el dominio público, comprobar `/health` con el token y registrar la URL en `/evento`.
 
-**Detalle a tener en cuenta:** `/health` exige token, igual que el original. El healthcheck automático de Railway no manda token y recibiría un 401, así que no lo activamos y vigilamos la app con nuestro propio monitor.
+**Detalle a tener en cuenta:** `/health` exige token, igual que el original. El healthcheck automático de Railway no manda token y recibiría un 401, así que no se activa y la app se vigila con el monitor propio.
 
 ---
 
 ## 10. Riesgos principales
 
-| Riesgo | Qué hacemos |
+| Riesgo | Mitigación |
 |---|---|
 | Algún comportamiento «pendiente de confirmar» resulta distinto | Confirmarlos contra el original antes de las 20:00, empezando por los de mayor impacto. Mientras tanto, el reemplazo usa un supuesto documentado |
 | El original cambia cerca de las 20:00 | Monitor horario, reglas en configuración y despliegue automático. Última comprobación a las 19:45 |
@@ -256,7 +256,7 @@ No sabemos qué va a cambiar, así que el diseño apuesta por **enterarse pronto
 
 ## 12. Pendientes de confirmar
 
-Son comportamientos que aún no hemos probado. Hasta confirmarlos, el reemplazo aplica el supuesto indicado:
+Son comportamientos que aún no se han probado. Hasta confirmarlos, el reemplazo aplica el supuesto indicado:
 
 - Qué pasa después de `AC-9999` (supuesto: `AC-10000`).
 - Si una cuenta bloqueada puede **recibir** transferencias (supuesto: sí).
