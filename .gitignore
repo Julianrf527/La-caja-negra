@@ -15,3 +15,9 @@ __pycache__/
 
 # El ejemplo sí se versiona
 !.env.example
+
+# Copias de entregables (los originales están versionados)
+entrega/
+
+# Salida generada por los scripts de tools (incluye las secuencias capturadas)
+tools/salida/
