@@ -42,12 +42,14 @@ Autenticación:
 
 ### 2.2 Formato del mensaje
 
-- Cuerpo de `POST /msg`: JSON `{"m": "<texto>"}`. `m` debe ser string. Claves extra se ignoran (#247); con claves duplicadas gana la última (#250); espacios alrededor del JSON se aceptan (#251); el `Content-Type` se ignora (#252–#255).
+- Cuerpo de `POST /msg`: JSON `{"m": "<texto>"}`. `m` debe ser string. Claves extra se ignoran (#247); con claves duplicadas gana la última (#250, #4634); espacios y saltos de línea alrededor del JSON se aceptan (#251, #4631); el `Content-Type` se ignora (#252–#255).
+  - Analizador JSON **estricto**: `NaN`, `Infinity` y `-Infinity` → E100 (#4618, #4627); coma final, comillas simples, texto detrás del objeto y BOM → E100 (#4628–#4630, #4632); un escape `\u003b` sí cuenta como `;` (#4633); `1e999` se acepta (#4637); `1` y `true` son JSON válido pero no objeto → E102 (#4635, #4636).
+  - **Profundidad máxima de anidamiento: 20 niveles**; con 21 → E100. El objeto raíz cuenta como un nivel y listas y objetos cuentan igual (#4640–#4647, #4649–#4654).
 - `m` = `COMANDO;arg1;…;argN;control`:
   - Se separa por `;`. El **primer** segmento es el comando, el **último** es el control, los de en medio son argumentos.
   - Cualquier segmento vacío (incluidos comando o control) → E104. Evidencia: #264, #267, #279, #280, #2542–#2544, #2550, #2552, #2556.
   - Sin ningún `;` (o `m` vacío / solo espacios) → E103. Evidencia: #245, #263, #265, #266, #2551.
-- El comando se reconoce sin distinguir mayúsculas (`CONSULTa`, `ping`, `PiNg`); los argumentos sí distinguen. Evidencia: #14, #281, #282, #1865–#1877.
+- El comando se reconoce sin distinguir mayúsculas, **solo para `a–z`** (`CONSULTa`, `ping`, `PiNg`); los argumentos sí distinguen. `ſ`, `ı` y `ß` no se convierten en `S`, `I` ni `SS`: `pıng` no es PING (#3781–#3783) y `conſulta` no es CONSULTA (#3777–#3779). Evidencia: #14, #281, #282, #1865–#1877.
 - Un espacio antes del comando lo hace desconocido (` PING` → E301). Evidencia: #283, #1559, #1560.
 - Tamaño: cuerpo HTTP completo ≤ 8192 bytes pasa; 8193 → 413 E101. Evidencia: #2132, #2133, #258–#260.
 
@@ -55,19 +57,20 @@ Autenticación:
 
 ```
 cuerpo   = m sin el último ";control"
-N        = entero formado por la concatenación de, en cada carácter de cuerpo.upper():
+N        = entero formado por la concatenación de, en cada carácter del cuerpo (a–z pasadas a A–Z, solo ASCII):
              letra A–Z  → su posición (A=1 … Z=26)
-             dígito 0–9 → el mismo dígito
+             dígito 0–9 (solo ASCII) → el mismo dígito
              otro       → se ignora
-esperado = (1 − 3·N) mod 97, y si da 0 → 97
+esperado = 98 − ((3·N) mod 97)          # ISO 7064 MOD 97-10; resultado entre 2 y 98
 ```
 
 - Ejemplo: `CONSULTA;AC-0001` → control `14` (evidencia: #8).
 - El control recibido se compara **como texto**: debe ser 1 o 2 dígitos ASCII, sin signo ni espacios, y ser idéntico a `esperado`. Evidencia: #1712 (`02` → E202), #1713–#1721, #1725 (E201), #1661–#1663.
-- `0` y `00` nunca son válidos; `97` solo cuando `esperado` es 97. Evidencia: #1661, #1662, #1722–#1724.
-- Si N es múltiplo de 97, el original **rechaza todos los controles** (E202). Probable: 3 cuerpos distintos más un barrido 0–97. Evidencia: #1499, #1728–#1823, #1825–#1836, #2518. El reemplazo lo replica.
+- `0`, `00` y `1` nunca son válidos (el rango es 2–98); `97` solo cuando `esperado` es 97, `98` solo cuando N es múltiplo de 97. Evidencia: #1661, #1662, #1722–#1724.
+- **Si N es múltiplo de 97 (incluido N = 0, un cuerpo sin letras ni dígitos), el control válido es `98`** (`RETIRA;98`, `ALTA;HD;98`, `ALTA;KY;98`, `ÑÑ;98`, `-;98`). Confirmado: #5076, #5553–#5559; coherente con #1499, #1728–#1823, #1825–#1836, #2518, #3789–#3795, donde esos cuerpos solo se probaron con controles distintos de 98. (Versiones anteriores de este anexo decían que no existía control válido: era falso.)
 - **`PING` no valida el control** (acepta `X`, `-1`, `64.0`…) pero sí E104. Evidencia: #267–#278.
-- Pendiente de confirmar (supuesto entre paréntesis): `PING` con argumentos y control inválido (se asume E302, sin validar control); N sin ningún dígito ni letra (se asume N = 0); `.upper()` de caracteres especiales como `ß` (se usa `str.upper()`, igual que el helper validado); si HALT y NOTAS validan el control como el resto (se asume que sí).
+- **Confirmado:** `PING` con argumentos y control inválido → E302 (`PING;a;X`, `PING;a;b;X`), y `PING;a;` → E104 (#3768–#3771). Las letras y los dígitos no ASCII no cuentan: `ß` se ignora (no se convierte en `SS`), `٣` no suma (#3773–#3775, #3785–#3787); `ſ` y `ı` tampoco se normalizan (#3777–#3783).
+- Pendiente de confirmar: si HALT y NOTAS validan el control como el resto (se asume que sí; no hay contraejemplos en el log).
 
 ### 2.4 Cuerpos de éxito
 
@@ -90,7 +93,7 @@ Estos pasos se evalúan en este orden y el primero que falla responde. Todos los
 | 2 | E001 | 401 | `no autorizado` | falta/incorrecto `Authorization` | #108–#123, #1647 |
 | 3 | E599 | 503 | `service halted` | solo `/msg`, y el servicio fue detenido con HALT | #1641–#1646, #2814 |
 | 4 | E101 | 413 | `cuerpo demasiado grande` | cuerpo > 8192 bytes (**antes** de parsear el JSON) | #2133, #2546, #258 |
-| 5 | E100 | 400 | `json inválido` | cuerpo vacío, JSON roto o texto plano | #237, #238, #249 |
+| 5 | E100 | 400 | `json inválido` | cuerpo vacío, JSON roto o texto plano; `NaN`/`Infinity`; anidamiento > 20 niveles | #237, #238, #249, #4627, #4647 |
 | 6 | E102 | 400 | `falta m` | JSON que no es objeto (`null`, lista, string), sin clave `m`, `m` no string, clave `M` | #239–#244, #246, #248 |
 | 7 | E103 | 400 | `falta control` | `m` sin ningún `;` (incluye `m` vacío) | #245, #263, #265, #266 |
 | 8 | E104 | 400 | `segmento vacío` | algún segmento vacío | #264, #267, #279, #280, #2556 |
@@ -113,13 +116,13 @@ Evidencia del orden (pares comprobados):
 - E599 antes que E100, E102, E202 y E101 (#1644–#1646, #2814).
 - E104 antes que E201 (#2556); E201 antes que E301/E302 (#2553, #2554); E202 antes que E301/E302 (#284, #2555); E301 antes que E302 (#2512).
 - Dentro de comandos: E302 antes que E303/E401 (#2514, #2519); en DEPOSITO, E303 antes que E401 (#2516, #2517); en TRANSFER, E303 antes que E304 (#2533), E303 antes que E401 (#2535), E401 antes que E510 (#2442, #2443), E304 antes que E510 (#2153), E510 antes que E506 y E507 (#2440, #2441, #2322, #2323), E506 antes que E507 (#2523, #2597).
-- Pendiente de confirmar: E304 frente a E401 cuando la misma cuenta inexistente es origen y destino (se asume E304 primero, como lo sugiere #2531 con cuenta existente).
+- **Confirmado:** E304 gana a E401 cuando origen y destino son la misma cuenta inexistente (`TRANSFER;AC-0099;AC-0099;5` → E304; con monto inválido gana E303). Evidencia: #3746–#3748.
 
 ### 2.6 Sugerencia de E301
 
-- Se añade `"sugerencia": "<COMANDO>"` cuando el comando (en mayúsculas) está a distancia de Levenshtein ≤ 2 de alguno de los comandos internos (`PING, ALTA, CONSULTA, DEPOSITO, TRANSFER, ANULA, HALT, NOTAS`), y se sugiere el más cercano.
+- Se añade `"sugerencia": "<COMANDO>"` cuando el comando (a–z en mayúsculas, solo ASCII) está a distancia de Levenshtein ≤ 2 de alguno de los comandos internos (`ALTA, ANULA, CONSULTA, DEPOSITO, HALT, NOTAS, PING, TRANSFER`), y se sugiere el más cercano.
 - Validado offline contra las **128 respuestas E301 del log sin contraejemplos** (con sugerencia y sin ella). Ejemplos: `HELP`→HALT (#1507), `TOTAL`→NOTAS (#2807), `ping2`→PING (#1553), `SALDOS`→ninguna (#15, #1496).
-- Pendiente de confirmar: el desempate cuando dos comandos están a la misma distancia (se usa el orden de la lista).
+- **Desempate confirmado: gana el primero por orden alfabético.** `AINA` (PING/ALTA) → ALTA, `HANG` (PING/HALT) → HALT, `AAT` (ALTA/HALT) → ALTA, `ANA` (ALTA/ANULA) → ALTA, `NTA` (ALTA/NOTAS) → ALTA, `AALA` (ALTA/ANULA/HALT) → ALTA, `HNLA` (ANULA/HALT) → ANULA, `NOLA` (ANULA/NOTAS) → ANULA. Evidencia: #3797, #3799, #3801, #3803, #3805, #3807, #3809, #3811. (El orden de la lista, que se supuso antes, daba PING en los dos primeros.)
 
 ---
 
@@ -138,7 +141,7 @@ Evidencia del orden (pares comprobados):
 - **Validaciones:** ninguna sobre el nombre; acepta números, espacios, acentos, signos, 300 caracteres, nombres tipo `AC-0001` y nombres repetidos (#1847, #1850–#1857).
 - **Efecto:** crea la cuenta `AC-NNNN` (contador +1, 4 dígitos) con saldo 0, guarda el nombre exacto como titular. Los errores no consumen id (#2478–#2483).
 - **Éxito:** 201 `{"cuentaId":"AC-0001"}` (#6).
-- Pendiente de confirmar: qué pasa tras `AC-9999` (se asume `AC-10000`).
+- Pendiente de confirmar (**no probado**: exigiría crear 9.999 cuentas, ~10.000 requests, fuera del presupuesto): qué pasa tras `AC-9999` (se asume `AC-10000`).
 
 ### CONSULTA
 - **Argumentos:** 1 (`cuenta`). 0 o ≥ 2 → E302 (#1863, #1864).
@@ -151,7 +154,7 @@ Evidencia del orden (pares comprobados):
 - **Validaciones, en orden:** E302 → E303 (monto) → E401 (cuenta) (#2516, #2517).
   - Monto válido: `^[1-9][0-9]{0,9}$`, es decir, entero positivo de hasta 10 dígitos, sin ceros a la izquierda, sin signo, sin espacios ni separadores, solo dígitos ASCII. Rechaza `0`, `-5`, `1.5`, `1,5`, `abc`, `1e3`, `007`, `+5`, ` 5`, `5 `, `٥`, `0x10`, `1_000` (#1886–#1898), `10000000000` (#1943) y `9007199254740992` (#1980). Acepta `9999999999` (#1977).
 - **Efecto:** `saldo += monto`; contador de operaciones +1; registra la operación (tipo depósito, cuenta, monto, no anulada). El saldo cambia al instante (#2500–#2502). No tiene tope acumulado (#1985, #1989–#2004).
-- **Cuenta bloqueada:** el depósito se acepta y **desbloquea** la cuenta (#2148, #2370, #2371). Pendiente de confirmar: si además pone a cero el contador de fallos (se asume que sí).
+- **Reinicio del bloqueo:** todo depósito a una cuenta la desbloquea y pone a cero su contador de fallos, **también si no estaba bloqueada**: con 2 fallos, un depósito y un tercer fallo no la bloquea (#3716–#3723). Al desbloquear con un depósito hacen falta otros 3 fallos para volver a bloquear (#3705–#3714, #3725–#3736). Evidencia previa: #2148, #2370, #2371.
 - **Éxito:** 200 `{"status":"recieved","operacionId":"OP-0001"}` (#9).
 
 ### TRANSFER
@@ -161,7 +164,7 @@ Evidencia del orden (pares comprobados):
 - **Bloqueo:** cada fallo 422 (E506 o E507) suma 1 al contador de fallos seguidos de la cuenta **origen**; al llegar a 3 la cuenta queda bloqueada y el siguiente TRANSFER desde ella da E510. Un TRANSFER exitoso pone el contador a 0. No cuentan E302, E303, E304, E401 ni E202 (#2180–#2229). El bloqueo no caduca (#2271–#2300, #2342–#2361). Evidencia: #2139–#2142, #2305–#2308, #2313–#2315, #2235–#2240, #2246–#2252.
 - **Efecto:** `origen.saldo -= monto`; `destino.saldo += monto`; contador de operaciones +1; registra la operación. No hay tope acumulado: 10 transferencias de 100000 pasan (#2071–#2081).
 - **Éxito:** 200 `{"status":"recieved","operacionId":"OP-0002"}` (#10).
-- Pendiente de confirmar: si una cuenta bloqueada puede recibir transferencias (se asume que sí); si los E507 de mismo titular cuentan para el bloqueo (se asume que sí, por ser fallo 422); si un TRANSFER exitoso entre medias reinicia también un desbloqueo por depósito.
+- **Confirmado:** una cuenta bloqueada **sí puede recibir** transferencias (#3695–#3703). Los E507 entre cuentas del mismo titular **sí cuentan** para el bloqueo (3 seguidos y el siguiente da E510; #3738–#3744).
 
 ### ANULA
 - **Argumentos:** 1 (`operación`). 0 o ≥ 2 → E302 (#1928, #1929).
@@ -176,7 +179,7 @@ Evidencia del orden (pares comprobados):
 - **Argumentos:** 1. 0 o ≥ 2 → E302 (#1651, #1655, #1658).
 - **Efecto:** con argumento exactamente `1`, marca el estado del token como detenido y responde 503 E599 `service halted` en esa misma llamada (#1565, #1669). A partir de ahí todo `/msg` da E599 hasta `/__reset` (#1641–#1648). `/health` sigue en 200 (#1640).
 - Cualquier otro argumento (`a`, `0`, `SI`, `YES`, `TRUE`, `CONFIRMA`, `OK`, `Y`, `2`, `true`, `S`, minúsculas) → 409 E520 y no detiene (#1652, #1672–#1708).
-- Pendiente de confirmar: variantes como `01`, `+1`, ` 1` (se comparan como texto exacto, así que dan E520).
+- **Confirmado:** `01`, `+1`, ` 1`, `1 `, `1.0` y `１` (ancho completo) dan E520 y no detienen: la confirmación se compara como texto exacto `1` (#3750–#3766).
 
 ### NOTAS (oculto)
 - **Argumentos:** 0. Con argumentos → E302 (#2832–#2842, #2851).
@@ -205,25 +208,27 @@ Nota: el diagrama es esquemático. Donde difiere, manda la tabla 2.5:
 | **Despachador de comandos** | Tabla comando → (aridad, handler). Los handlers aplican las reglas propias (E303, E304, E401/E402, E510, E506, E507). |
 | **Estado en memoria por token** | Cuentas, operaciones, contadores, fallos/bloqueos, flag de detenido (sección 5). |
 | **Capa de compatibilidad** | Convierte el resultado del handler en status + cuerpo exactos, con las rarezas del original (sección 6). |
-| **Configuración** | Códigos, mensajes, status, límites y orden de validación (`app/reglas.py`). El pipeline lee de aquí. |
+| **Configuración** | Códigos, mensajes, status, límites y orden de validación (`app/config/reglas.py`, con perfiles versionados). El pipeline lee de aquí. |
 | **Monitoreo de cambios** | Script que reproduce los ejemplos contra el original cada hora y avisa de diferencias (sección 8). |
 
 **`/health` y `/__reset` salen directo del router y no pasan por el pipeline.** Solo cruzan la auth: no se les aplica el chequeo de detenido, ni tamaño, ni JSON. Por eso responden aun con el servicio detenido (evidencia: #1640 para `/health`, #1648 para `/__reset`) y `/__reset` es lo que saca al servicio de ese estado.
 
-Estructura de código prevista:
+Estructura de código (implementada):
 
 ```
 app/
-  main.py        # FastAPI sin docs; ruta comodín; router; auth
-  pipeline.py    # pasos de validación en el orden de reglas.ORDEN
-  comandos.py    # handlers: PING, ALTA, CONSULTA, DEPOSITO, TRANSFER, ANULA, HALT, NOTAS
-  estado.py      # EstadoToken y almacén por token
-  control.py     # normalizar(), control(), validar()
-  sugerencia.py  # Levenshtein ≤ 2
-  compat.py      # serialización y rarezas
-  reglas.py      # errores, límites, orden, textos
+  main.py            # FastAPI sin docs; ruta comodín; router; auth
+  captura.py         # línea «CAPTURA {...}» por request en stdout (nunca el token)
+  core/              # pipeline.py (pasos en el orden del perfil), control.py, sugerencia.py
+  comandos/          # un archivo por comando + __init__.py (registro comando → handler) + base.py
+  estado/estado.py   # EstadoToken y almacén por token
+  respuestas/compat.py   # formato exacto y rarezas
+  config/            # reglas.py (perfiles v1…) y settings.py (TOKEN_EQUIPO, VERSION_REGLAS)
 tests/
-  test_control.py  test_orden.py  test_regresion.py
+  unit/              # control, orden, estado, sugerencia, confirmados
+  regresion/         # reproduce experimentos.jsonl
+  conftest.py
+tools/               # comparación contra el original (rutas, diferencial, confirmar, profundidad)
 ```
 
 ---
@@ -242,7 +247,7 @@ Un `EstadoToken` por token, en un diccionario en memoria del proceso. Solo hay u
 
 - **`/__reset` borra todo lo anterior** y repone contadores en `AC-0001` y `OP-0001` (#2503–#2507), cuentas, bloqueos (#2162) y el estado detenido (#1648).
 - No se borra con `/__reset` (por ser del proceso, no del token): el contador de la cabecera `X-Req`. El original lo incrementa en cada respuesta de `/msg` y no lo reinicia (x_req 1, 2 alrededor de un reset en #2–#4; #2011 → 1756). Es probable y no afecta la comparación (los headers no se evalúan). Pendiente de confirmar si es por token o global.
-- Un depósito a una cuenta bloqueada la desbloquea (#2370, #2371). Pendiente de confirmar: si además reinicia `fallos_seguidos` (se asume que sí).
+- Un depósito a una cuenta (bloqueada o no) la desbloquea y reinicia `fallos_seguidos` (confirmado: #3705–#3723, #3725–#3736).
 - Concurrencia: un proceso, un event loop; el pipeline y los handlers son síncronos y sin `await` intermedios, así que cada request es atómico sin locks.
 - Memoria: crece con cuentas y operaciones; sin tope en el original (35 altas, ~40 operaciones seguidas sin problema; #2083–#2117, #1977). No se impone tope.
 
@@ -262,8 +267,8 @@ Cada rareza se replica a propósito. Los handlers devuelven resultados de domini
 | C-06 | La ruta se resuelve antes que la auth (404 sin token); `/health` y `/__reset` exigen token. | #109, #110, #111, #2558 |
 | C-07 | `E101` se evalúa antes que `E100` y antes de parsear; umbral exacto 8192 bytes de cuerpo. | #2132, #2133, #2546 |
 | C-08 | `PING` no valida el control, pero sí segmentos vacíos. | #267–#278 |
-| C-09 | Control esperado 97 cuando la fórmula da 0; 0/00 nunca válidos. | #1661–#1663 |
-| C-10 | Si N es múltiplo de 97 no hay control válido (siempre E202). Probable. | #1499, #1728–#1823, #2518 |
+| C-09 | Control esperado = 98 − (3N mod 97), de 2 a 98 (ISO 7064 MOD 97-10); 0, 00 y 1 nunca válidos. | #1661–#1663, #5553–#5559 |
+| C-10 | Si N es múltiplo de 97 (incluido N = 0) el control válido es 98. | #5076, #5553–#5559 |
 | C-11 | El control se compara como texto de 1–2 dígitos: `02` → E202; `002` → E201. | #1712, #1713 |
 | C-12 | Comando sin distinguir mayúsculas, argumentos sí; ids exactos, sin normalizar. | #14, #1865–#1877 |
 | C-13 | Monto estricto `^[1-9][0-9]{0,9}$` (tope 9.999.999.999). | #1886–#1898, #1943, #1977 |
@@ -329,10 +334,10 @@ El reto avisa de que el servicio puede cambiar durante el día y se evalúa cont
 **Tests unitarios (pytest, sin red)**
 - `test_control.py`:
   - La fórmula contra las 17 líneas no-PING de `ejemplos.jsonl` (#4–#23).
-  - Esperado 97 cuando da 0 (#1663) y rechazo con N múltiplo de 97 (#1728–#1823).
+  - Esperado 97 cuando `98 − 3N mod 97` da 97 (#1663) y 98 con N múltiplo de 97 (#5076, #5553–#5559).
   - Forma del control: `02` → E202, `002`, `+2`, ` 2`, `٢` → E201.
   - PING omite el control.
-- `test_orden.py`: un caso por cada par de errores comprobado en 2.5, incluido E101 antes que E100 (#2546), E599 antes que E100/E102/E202 (#1644–#1646) y E510 < E506 < E507 (#2440, #2441, #2523).
+- `tests/unit/test_orden.py`: un caso por cada par de errores comprobado en 2.5 (E101 antes que E100 #2546, E599 antes que E100/E102/E202 #1644–#1646, E510 < E506 < E507 #2440, #2441, #2523); `test_estado.py`: contadores, bloqueo, titulares, ANULA y reset; `test_confirmados.py`: los puntos antes pendientes, ya comprobados (ids #3695–#5559).
 - Tests de estado: contadores que no avanzan con errores (#2478–#2496), reversión de ANULA con saldos negativos (#2455–#2476), bloqueo tras 3 fallos y desbloqueo por depósito (#2142, #2370), excepción de titular (#2706–#2762), `reset` repone todo (#2503–#2507).
 - `test_sugerencia.py`: las 128 líneas E301 del log.
 
@@ -388,12 +393,12 @@ uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1
 | --- | --- | --- |
 | R-01 | Una regla pendiente de confirmar (sección 2.3, 3) resulta distinta en el evaluador. | Probarlas contra el original antes de las 20:00; mientras, el reemplazo usa el supuesto indicado. |
 | R-02 | El original cambia durante el día (reglas o mensajes). | Sección 8: monitoreo horario, `reglas.py`, regresión, deploy. |
-| R-03 | La regla de N múltiplo de 97 (C-10) es una inferencia (probable). | Verificar con más cuerpos; tests marcados como «probable». |
+| R-03 | (Cerrado) La regla «N múltiplo de 97 → sin control válido» era falsa: el control es 98. | #5076, #5553–#5559 |
 | R-04 | Reinicio del proceso en Railway borra el estado en medio de un test. | 1 réplica, política `ON_FAILURE`, sin crashes: el pipeline captura excepciones y las convierte en un error controlado en lugar de matar el proceso. |
 | R-05 | Healthcheck de Railway no puede autenticarse. | Sección 10: sin healthcheckPath; monitoreo propio. |
 | R-06 | El evaluador pide `/health` sin token esperando 200. | Se sigue el contrato (token en todas las llamadas) y el original (401 sin token, #109). |
 | R-07 | Cuerpos > 8192 bytes: leer el cuerpo completo consume memoria. | Rechazar por `Content-Length` o cortar la lectura al pasar de 8193 bytes. |
-| R-08 | Unicode: `str.upper()` y `[0-9]` frente a `\d` (dígitos árabes, `ß`). | Regex con `[0-9]`; probar `ß` contra el original (pendiente). |
+| R-08 | Unicode: mayúsculas solo ASCII y `[0-9]` ASCII (confirmado: `ß`, `ſ`, `ı` y dígitos árabes no se normalizan ni cuentan). | #3773–#3787 |
 | R-09 | El log no distingue cuerpos string-JSON de texto plano (#248/#249). | Prueba manual de esas líneas. |
 | R-10 | NOTAS contiene una instrucción que apunta a un endpoint interno. | Se trata como dato: sin ruta, sin llamada saliente. Además el reemplazo no puede llamar al original ni a ningún otro servicio. |
 | R-11 | Poco tiempo para confirmar pendientes. | Priorizar según impacto en el set (los comandos básicos primero; E510/HALT/NOTAS/titular después). |

@@ -27,8 +27,8 @@ Formato de `m`: `COMANDO;arg1;…;control`. El último segmento es el control.
 | ID | Comportamiento | Evidencia | Confianza |
 | --- | --- | --- | --- |
 | IN-01 | Fórmula del control: tomar el mensaje sin el último `;control`, pasarlo a mayúsculas, cambiar letras por su posición en el alfabeto (A=1…Z=26), dejar los dígitos, ignorar lo demás; concatenar en un entero N; `control = (1 − 3·N) mod 97`. Implementada en `helper/control.py`; coincide con las 17 líneas no-PING de ejemplos.jsonl y con todas las firmadas en esta fase. | 4–23, 1838–1857, 2445–2496 | C |
-| IN-02 | Si `(1 − 3N) mod 97 = 0`, el control válido es **97**. Con 0 o 00 responde E202. | 1661–1663, 1726 | C |
-| IN-03 | Si N es múltiplo de 97 la fórmula da 1, pero **ningún control (0–97) es aceptado**: siempre E202. Esos cuerpos (p. ej. `RETIRA`, `ALTA;HD`, `ALTA;KY`, `ALTA;LV`, `DEPOSITO;AC-0099;0`) no se pueden enviar. | 1728–1823, 1825–1836, 1499, 2518 | P |
+| IN-02 | Fórmula completa: `control = 98 − ((3·N) mod 97)` (ISO 7064 MOD 97-10), de 2 a 98; equivale a `(1 − 3N) mod 97` con 0→97, salvo N múltiplo de 97 (ver IN-03). Con 0, 00 o 1 responde E202. | 1661–1663, 1726 | C |
+| IN-03 | **Corrección (antes decía que no había control válido):** si N es múltiplo de 97 (p. ej. `RETIRA`, `ALTA;HD`, `ALTA;KY`, `ÑÑ`), el control válido es **98**. Los barridos anteriores solo probaron 0–97, por eso parecía imposible. | 5076, 5553–5559 | C |
 | IN-04 | El control se compara como texto de 1 o 2 dígitos, sin signo ni cero a la izquierda: `02` → E202 aunque el valor sea 2. Más de 2 dígitos, signo, espacio, punto, hexadecimal, unicode o letras → E201 `control mal formado`. | 1711–1721, 1664, 1725, 285 | C |
 | IN-05 | Controles 97, 98 y 99 que no son el correcto → E202; 100 → E201. 97 no es comodín. | 1722–1725 | C |
 | IN-06 | El comando se pasa a mayúsculas para reconocerlo (`CONSULTa`, `ping`, `PiNg` funcionan); el control tampoco distingue mayúsculas en todo el cuerpo. | 14, 281, 282 | C |
@@ -118,7 +118,7 @@ Aridad = número de argumentos sin contar el control.
 | RI-04 | El bloqueo E510 permite denegar servicio con 3 transferencias fallidas y solo se levanta con un depósito. | Bloqueo con expiración y cuenta de fallos solo del titular autenticado. | 2142, 2370 | C |
 | RI-05 | La exención del límite por mismo nombre se explota abriendo dos cuentas con el mismo nombre. | Comparar identidad real del titular, no el texto. | 2706–2749 | C |
 | RI-06 | `ANULA` permite saldos negativos y anular depósitos ya gastados. | Validar fondos al revertir. | 2464, 2476 | C |
-| RI-07 | El control es un checksum débil, no una firma, y los cuerpos con N múltiplo de 97 nunca validan. | Usar HMAC; si se mantiene, tratar N≡0. | 1728–1823 | P |
+| RI-07 | El control es un checksum débil (ISO 7064 MOD 97-10), no una firma. | Usar HMAC. | IN-02 | C |
 | RI-08 | `ALTA` acepta cualquier nombre (300 caracteres, ids falsos) y duplicados. | Validar formato y unicidad. | 1847–1857 | C |
 | RI-09 | `DEPOSITO` y `TRANSFER` actúan sobre cualquier cuenta sin comprobar propiedad. | Autenticar al titular. | 1927, 2009 | P |
 | RI-10 | Respuestas inconsistentes (`cuentaId` vs `cuenta_id`, `recieved`, 200 en ANULA fallida). | Estandarizar en una versión nueva; en el reemplazo hay que **conservarlas**. | 1838, 1858, 1840, 2454 | C |

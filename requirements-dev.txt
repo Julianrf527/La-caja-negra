@@ -1,0 +1,12 @@
+-r requirements.txt
+
+# Pruebas del reemplazo
+pytest>=8.0
+httpx>=0.28            # lo usa el TestClient de FastAPI
+
+# test-original-app (exploración del original)
+pydantic-settings>=2.6
+typer>=0.15
+rich>=13.9
+tenacity>=9.0
+filelock>=3.16

@@ -54,7 +54,7 @@ Las órdenes llegan como un texto con campos separados por `;`:
 
 El último campo es un **dígito de control**, como el de una cuenta bancaria o un IBAN. Sirve para detectar mensajes corruptos: si no cuadra, el servicio rechaza el mensaje.
 
-La fórmula ya está descifrada. En palabras: se toma el mensaje sin el control, se cambian las letras por su posición en el alfabeto (A=1, B=2…), se ignoran los símbolos, se forma un número N, y el control es `(1 − 3·N) mod 97`. La fórmula coincide con más de 1.100 mensajes del log sin ninguna excepción.
+La fórmula ya está descifrada. En palabras: se toma el mensaje sin el control, se cambian las letras por su posición en el alfabeto (A=1, B=2…), se ignoran los símbolos, se forma un número N, y el control es `98 − (3·N mod 97)` (es el estándar ISO 7064 MOD 97-10, el de los IBAN: va de 2 a 98). La fórmula coincide con miles de mensajes del log sin ninguna excepción. Solo las letras `a–z` se pasan a mayúsculas: `ß`, `ſ` o `ı` no se convierten y los dígitos no ASCII no cuentan.
 
 ### 2.3 Los comandos
 
@@ -94,7 +94,7 @@ Cada mensaje pasa por una serie de controles **en un orden fijo**. El primero qu
  2. ¿El token es válido?            → si no: 401 E001 no autorizado
  3. ¿El servicio está detenido?     → si sí: 503 E599 service halted
  4. ¿El cuerpo pesa más de 8 KB?    → si sí: 413 E101
- 5. ¿Es JSON válido?                → si no: 400 E100
+ 5. ¿Es JSON válido?                → si no: 400 E100 (parser estricto: sin NaN/Infinity, máx. 20 niveles de anidamiento)
  6. ¿Trae el campo "m" como texto?  → si no: 400 E102
  7. ¿Tiene control y ningún campo vacío? → si no: 400 E103 / E104
  8. ¿El control tiene forma y valor correctos? → si no: 400 E201 / E202
@@ -126,19 +126,28 @@ La tabla completa de códigos, mensajes exactos y el orden dentro de cada comand
 | **Configuración** | Códigos, mensajes, límites y orden de validación en un solo archivo |
 | **Monitor de cambios** | Script que compara el original con lo esperado cada hora |
 
-Organización del código:
+Organización del código (la carpeta `app/` es lo único que se despliega):
 
 ```
 app/
-  main.py         entrada, ruta comodín, router y auth
-  pipeline.py     los pasos de validación, en orden
-  control.py      la fórmula del dígito de control
-  comandos.py     un handler por comando
-  estado.py       lo que se recuerda por token
-  compat.py       el formato exacto de las respuestas
-  reglas.py       configuración: códigos, mensajes, límites, orden
-tests/            control, orden de errores y regresión contra el log
+  main.py               entrada, ruta comodín, router y auth
+  captura.py            registro «CAPTURA {...}» por request en stdout (sin token)
+  core/                 pipeline.py (pasos de validación), control.py, sugerencia.py
+  comandos/             un archivo por comando (ping, alta, consulta, deposito,
+                        transfer, anula, halt, notas) + registro en __init__.py
+  estado/estado.py      lo que se recuerda por token
+  respuestas/compat.py  el formato exacto de las respuestas
+  config/               reglas.py (perfiles versionados, VERSION_REGLAS) y settings.py
+tests/
+  unit/                 control, orden de errores, estado, sugerencia, puntos confirmados
+  regresion/            reproduce experimentos.jsonl contra el reemplazo
+  conftest.py           fixtures compartidas
+tools/                  scripts que comparan con el original (nunca los importa app/)
+test-original-app/      exploración del original y log de experimentos
+docs/                   este documento, el anexo técnico y el diagrama
 ```
+
+La imagen de arriba es esquemática y muestra la organización anterior (módulos sueltos); manda este árbol.
 
 ---
 
@@ -182,7 +191,8 @@ En un sistema nuevo serían bugs. Aquí forman parte del contrato:
 
 - **Textos:** la errata `"recieved"`; el espacio al final de `"comando desconocido "`; claves inconsistentes (`cuentaId` en ALTA, `cuenta_id` en CONSULTA).
 - **Status poco habituales:** anular dos veces la misma operación responde 200 con `ok:false` en lugar de un error; `HEAD` responde 404 sin cuerpo.
-- **Validación:** `PING` no revisa el control; los comandos aceptan minúsculas, pero los ids de cuenta no; si el número N es múltiplo de 97, ningún control es válido.
+- **Validación:** `PING` no revisa el control; los comandos aceptan minúsculas, pero los ids de cuenta no; el comando solo se reconoce en mayúsculas/minúsculas ASCII (`ß`, `ſ`, `ı` no se normalizan); el JSON es estricto (rechaza `NaN`, y más de 20 niveles de anidamiento).
+- **Bloqueos:** todo depósito a una cuenta la desbloquea y reinicia su contador de fallos, aunque no estuviera bloqueada; una cuenta bloqueada sí puede recibir transferencias; la sugerencia de comandos desempata por orden alfabético.
 - **Dinero:** ANULA no comprueba fondos y puede dejar saldos negativos; el límite de 100.000 no se aplica entre cuentas del mismo titular (comparando el nombre exacto).
 - **Seguridad:** las sugerencias revelan comandos ocultos; `HALT;1` apaga el servicio; `NOTAS` expone notas internas.
 
@@ -256,12 +266,20 @@ No se sabe qué va a cambiar, así que el diseño apuesta por **enterarse pronto
 
 ## 12. Pendientes de confirmar
 
-Son comportamientos que aún no se han probado. Hasta confirmarlos, el reemplazo aplica el supuesto indicado:
+Se probaron contra el original (log `experimentos.jsonl`; ids entre paréntesis, detalle en el [anexo](anexo-referencia-tecnica.md)). Los supuestos incorrectos ya se corrigieron en `app/`.
 
-- Qué pasa después de `AC-9999` (supuesto: `AC-10000`).
-- Si una cuenta bloqueada puede **recibir** transferencias (supuesto: sí).
-- Si un depósito, además de desbloquear la cuenta, pone a cero el contador de fallos (supuesto: sí).
-- Si los fallos de saldo entre cuentas del mismo titular cuentan para el bloqueo (supuesto: sí).
-- Qué error gana cuando origen y destino son la misma cuenta inexistente (supuesto: «origen y destino iguales»).
-- Cómo se desempata la sugerencia cuando dos comandos están igual de cerca (supuesto: orden de la lista).
-- Variantes de la confirmación de HALT como `01` o `+1` (supuesto: se rechazan).
+| Punto | Resultado | Evidencia |
+|---|---|---|
+| Una cuenta bloqueada, ¿puede **recibir** transferencias? | **Confirmado:** sí (supuesto correcto) | #3695–#3703 |
+| ¿Un depósito pone a cero el contador de fallos al desbloquear? | **Confirmado:** sí; y además lo reinicia **aunque la cuenta no estuviera bloqueada** (el supuesto era parcial y se corrigió) | #3705–#3714, #3716–#3723, #3725–#3736 |
+| ¿Los fallos de saldo entre cuentas del mismo titular cuentan para el bloqueo? | **Confirmado:** sí | #3738–#3744 |
+| Origen y destino iguales y **inexistentes**: ¿qué error gana? | **Confirmado:** «origen y destino iguales» (E304) | #3746–#3748 |
+| Desempate de la sugerencia | **Corregido:** gana el primero por **orden alfabético**, no el de la lista | #3797–#3811 |
+| Variantes de la confirmación de `HALT` (`01`, `+1`, ` 1`, `1 `, `1.0`, `１`) | **Confirmado:** se rechazan (E520) | #3750–#3766 |
+| `PING` con argumentos y control inválido | **Confirmado:** E302 (no valida el control) | #3768–#3771 |
+| Mayúsculas y dígitos no ASCII (`ß`, `ſ`, `ı`, `٣`) | **Corregido:** no se normalizan (antes se usaba `str.upper()`) | #3773–#3787 |
+| Cuerpo sin letras ni dígitos o con N múltiplo de 97 | **Corregido:** el control válido es **98** (antes se creía que no existía ninguno) | #5076, #5553–#5559 |
+| JSON: `NaN`, profundidad, BOM, coma final… | **Corregido:** parser estricto y máximo de 20 niveles | #4627–#4654 |
+| Qué pasa después de `AC-9999` | **Sin probar:** exigiría crear ~10.000 cuentas. Se mantiene el supuesto `AC-10000` | — |
+
+Rutas ocultas: se comprobaron sin token `/msg`, `/health`, `/__reset`, `/`, `/internal/export-docs`, `/notas`, `/docs` y `/openapi.json` con GET y POST; el original y el reemplazo responden igual en las 16 combinaciones (404 E404, salvo las tres rutas conocidas que dan 401 E001) y no apareció ninguna ruta nueva (#2852–#2867).

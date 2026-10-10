@@ -12,3 +12,6 @@ __pycache__/
 
 # Lock del log de experimentos
 *.jsonl.lock
+
+# El ejemplo sí se versiona
+!.env.example
