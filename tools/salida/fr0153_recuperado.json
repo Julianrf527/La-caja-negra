@@ -1,0 +1,5050 @@
+[
+ {
+  "id": 1,
+  "nuevo_id": 5671,
+  "request": "GET /health",
+  "v1": {
+   "status": 200,
+   "response": {
+    "ok": true
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "ok": true
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2,
+  "nuevo_id": 5672,
+  "request": "PING;64",
+  "v1": {
+   "status": 200,
+   "response": {
+    "pong": true
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "pong": true
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 6,
+  "nuevo_id": 5674,
+  "request": "ALTA;Lucia;82",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 7,
+  "nuevo_id": 5675,
+  "request": "ALTA;Mateo;3",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 8,
+  "nuevo_id": 5676,
+  "request": "CONSULTA;AC-0001;14",
+  "v1": {
+   "status": 200,
+   "response": {
+    "cuenta_id": "AC-0001",
+    "saldo": 0
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "cuenta_id": "AC-0001",
+    "saldo": 0
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 9,
+  "nuevo_id": 5677,
+  "request": "DEPOSITO;AC-0001;250000;86",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 10,
+  "nuevo_id": 5678,
+  "request": "TRANSFER;AC-0001;AC-0002;40000;86",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 12,
+  "nuevo_id": 5679,
+  "request": "TRANSFER;AC-0001;AC-0002;120000;55",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 13,
+  "nuevo_id": 5680,
+  "request": "TRANSFER;AC-0001;AC-0002;100000;12",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 16,
+  "nuevo_id": 5681,
+  "request": "ANULA;OP-0003;66",
+  "v1": {
+   "status": 200,
+   "response": {
+    "ok": true,
+    "anulada": "OP-0003"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "ok": true,
+    "anulada": "OP-0003"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 17,
+  "nuevo_id": 5682,
+  "request": "ANULA;OP-0003;66",
+  "v1": {
+   "status": 200,
+   "response": {
+    "ok": false,
+    "motivo": "ya anulada"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "ok": false,
+    "motivo": "ya anulada"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 25,
+  "nuevo_id": 5684,
+  "request": "GET /",
+  "v1": {
+   "status": 404,
+   "response": {
+    "error": "E404",
+    "mensaje": "ruta desconocida"
+   }
+  },
+  "v2": {
+   "status": 404,
+   "response": {
+    "error": "E404",
+    "mensaje": "ruta desconocida"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 30,
+  "nuevo_id": 5685,
+  "request": "HEAD /",
+  "v1": {
+   "status": 404,
+   "response": ""
+  },
+  "v2": {
+   "status": 404,
+   "response": ""
+  },
+  "igual": true
+ },
+ {
+  "id": 54,
+  "nuevo_id": 5686,
+  "request": "POST /health PING;64",
+  "v1": {
+   "status": 404,
+   "response": {
+    "error": "E404",
+    "mensaje": "ruta desconocida"
+   }
+  },
+  "v2": {
+   "status": 404,
+   "response": {
+    "error": "E404",
+    "mensaje": "ruta desconocida"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 67,
+  "nuevo_id": 5687,
+  "request": "GET /__reset",
+  "v1": {
+   "status": 404,
+   "response": {
+    "error": "E404",
+    "mensaje": "ruta desconocida"
+   }
+  },
+  "v2": {
+   "status": 404,
+   "response": {
+    "error": "E404",
+    "mensaje": "ruta desconocida"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 108,
+  "nuevo_id": 5688,
+  "request": "PING;64",
+  "v1": {
+   "status": 401,
+   "response": {
+    "error": "E001",
+    "mensaje": "no autorizado"
+   }
+  },
+  "v2": {
+   "status": 401,
+   "response": {
+    "error": "E001",
+    "mensaje": "no autorizado"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 111,
+  "nuevo_id": 5689,
+  "request": "GET /nope",
+  "v1": {
+   "status": 404,
+   "response": {
+    "error": "E404",
+    "mensaje": "ruta desconocida"
+   }
+  },
+  "v2": {
+   "status": 404,
+   "response": {
+    "error": "E404",
+    "mensaje": "ruta desconocida"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 112,
+  "nuevo_id": 5690,
+  "request": "PING;64",
+  "v1": {
+   "status": 401,
+   "response": {
+    "error": "E001",
+    "mensaje": "no autorizado"
+   }
+  },
+  "v2": {
+   "status": 401,
+   "response": {
+    "error": "E001",
+    "mensaje": "no autorizado"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 116,
+  "nuevo_id": 5691,
+  "request": "PING;64",
+  "v1": {
+   "status": 401,
+   "response": {
+    "error": "E001",
+    "mensaje": "no autorizado"
+   }
+  },
+  "v2": {
+   "status": 401,
+   "response": {
+    "error": "E001",
+    "mensaje": "no autorizado"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 237,
+  "nuevo_id": 5693,
+  "request": "\"\"",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E100",
+    "mensaje": "json inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E100",
+    "mensaje": "json inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 238,
+  "nuevo_id": 5694,
+  "request": "\"{\\\"m\\\": \\\"PING;64\\\"\"",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E100",
+    "mensaje": "json inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E100",
+    "mensaje": "json inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 239,
+  "nuevo_id": 5695,
+  "request": "null",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E102",
+    "mensaje": "falta m"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E102",
+    "mensaje": "falta m"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 241,
+  "nuevo_id": 5696,
+  "request": "{}",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E102",
+    "mensaje": "falta m"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E102",
+    "mensaje": "falta m"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 245,
+  "nuevo_id": 5697,
+  "request": "",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E103",
+    "mensaje": "falta control"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E103",
+    "mensaje": "falta control"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 246,
+  "nuevo_id": 5698,
+  "request": "{\"M\": \"PING;64\"}",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E102",
+    "mensaje": "falta m"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E102",
+    "mensaje": "falta m"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 249,
+  "nuevo_id": 5699,
+  "request": "\"PING;64\"",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E100",
+    "mensaje": "json inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E100",
+    "mensaje": "json inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 258,
+  "nuevo_id": 5700,
+  "request": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA…",
+  "v1": {
+   "status": 413,
+   "response": {
+    "error": "E101",
+    "mensaje": "cuerpo demasiado grande"
+   }
+  },
+  "v2": {
+   "status": 413,
+   "response": {
+    "error": "E101",
+    "mensaje": "cuerpo demasiado grande"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 263,
+  "nuevo_id": 5702,
+  "request": "PING",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E103",
+    "mensaje": "falta control"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E103",
+    "mensaje": "falta control"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 264,
+  "nuevo_id": 5703,
+  "request": ";",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E104",
+    "mensaje": "segmento vacío"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E104",
+    "mensaje": "segmento vacío"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 267,
+  "nuevo_id": 5704,
+  "request": "PING;",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E104",
+    "mensaje": "segmento vacío"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E104",
+    "mensaje": "segmento vacío"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 268,
+  "nuevo_id": 5705,
+  "request": "PING;X",
+  "v1": {
+   "status": 200,
+   "response": {
+    "pong": true
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "pong": true
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 270,
+  "nuevo_id": 5706,
+  "request": "PING;-1",
+  "v1": {
+   "status": 200,
+   "response": {
+    "pong": true
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "pong": true
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 281,
+  "nuevo_id": 5707,
+  "request": "ping;64",
+  "v1": {
+   "status": 200,
+   "response": {
+    "pong": true
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "pong": true
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 283,
+  "nuevo_id": 5708,
+  "request": " PING;64",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido ",
+    "sugerencia": "PING"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido ",
+    "sugerencia": "PING"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 284,
+  "nuevo_id": 5709,
+  "request": "XXXX;99",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 285,
+  "nuevo_id": 5710,
+  "request": "XXXX;ZZ",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E201",
+    "mensaje": "control mal formado"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E201",
+    "mensaje": "control mal formado"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1495,
+  "nuevo_id": 5712,
+  "request": "SALDO;38",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido "
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido "
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1507,
+  "nuevo_id": 5713,
+  "request": "HELP;72",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido ",
+    "sugerencia": "HALT"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido ",
+    "sugerencia": "HALT"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1565,
+  "nuevo_id": 5715,
+  "request": "HALT;1;19",
+  "v1": {
+   "status": 503,
+   "response": {
+    "error": "E599",
+    "mensaje": "service halted"
+   }
+  },
+  "v2": {
+   "status": 503,
+   "response": {
+    "error": "E599",
+    "mensaje": "service halted"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1566,
+  "nuevo_id": 5716,
+  "request": "HALT;AC-0001;82",
+  "v1": {
+   "status": 503,
+   "response": {
+    "error": "E599",
+    "mensaje": "service halted"
+   }
+  },
+  "v2": {
+   "status": 503,
+   "response": {
+    "error": "E599",
+    "mensaje": "service halted"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1567,
+  "nuevo_id": 5717,
+  "request": "HALT;a;b;78",
+  "v1": {
+   "status": 503,
+   "response": {
+    "error": "E599",
+    "mensaje": "service halted"
+   }
+  },
+  "v2": {
+   "status": 503,
+   "response": {
+    "error": "E599",
+    "mensaje": "service halted"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1641,
+  "nuevo_id": 5718,
+  "request": "PING;1;46",
+  "v1": {
+   "status": 503,
+   "response": {
+    "error": "E599",
+    "mensaje": "service halted"
+   }
+  },
+  "v2": {
+   "status": 503,
+   "response": {
+    "error": "E599",
+    "mensaje": "service halted"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1644,
+  "nuevo_id": 5719,
+  "request": "\"{\"",
+  "v1": {
+   "status": 503,
+   "response": {
+    "error": "E599",
+    "mensaje": "service halted"
+   }
+  },
+  "v2": {
+   "status": 503,
+   "response": {
+    "error": "E599",
+    "mensaje": "service halted"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1646,
+  "nuevo_id": 5720,
+  "request": "ALTA;Ana;1",
+  "v1": {
+   "status": 503,
+   "response": {
+    "error": "E599",
+    "mensaje": "service halted"
+   }
+  },
+  "v2": {
+   "status": 503,
+   "response": {
+    "error": "E599",
+    "mensaje": "service halted"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1649,
+  "nuevo_id": 5722,
+  "request": "PING;1;46",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1650,
+  "nuevo_id": 5723,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1652,
+  "nuevo_id": 5724,
+  "request": "HALT;a;19",
+  "v1": {
+   "status": 409,
+   "response": {
+    "error": "E520",
+    "mensaje": "operación destructiva: detiene el servicio; reenvía con confirmación"
+   }
+  },
+  "v2": {
+   "status": 409,
+   "response": {
+    "error": "E520",
+    "mensaje": "operación destructiva: detiene el servicio; reenvía con confirmación"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1661,
+  "nuevo_id": 5726,
+  "request": "AYUDA;0",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1712,
+  "nuevo_id": 5728,
+  "request": "CONSULTA;AC-0005;02",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1713,
+  "nuevo_id": 5729,
+  "request": "CONSULTA;AC-0005;002",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E201",
+    "mensaje": "control mal formado"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E201",
+    "mensaje": "control mal formado"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1725,
+  "nuevo_id": 5730,
+  "request": "ALTA;Ana;100",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E201",
+    "mensaje": "control mal formado"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E201",
+    "mensaje": "control mal formado"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1843,
+  "nuevo_id": 5732,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1844,
+  "nuevo_id": 5733,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1845,
+  "nuevo_id": 5734,
+  "request": "DEPOSITO;AC-0001;1000;35",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1846,
+  "nuevo_id": 5735,
+  "request": "ALTA;85",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1860,
+  "nuevo_id": 5737,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1861,
+  "nuevo_id": 5738,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1862,
+  "nuevo_id": 5739,
+  "request": "DEPOSITO;AC-0001;1000;35",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1863,
+  "nuevo_id": 5740,
+  "request": "CONSULTA;11",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1865,
+  "nuevo_id": 5741,
+  "request": "CONSULTA;ac-0001;14",
+  "v1": {
+   "status": 404,
+   "response": {
+    "error": "E401",
+    "mensaje": "cuenta inexistente"
+   }
+  },
+  "v2": {
+   "status": 404,
+   "response": {
+    "error": "E401",
+    "mensaje": "cuenta inexistente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1879,
+  "nuevo_id": 5743,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1880,
+  "nuevo_id": 5744,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1881,
+  "nuevo_id": 5745,
+  "request": "DEPOSITO;AC-0001;1000;35",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1882,
+  "nuevo_id": 5746,
+  "request": "DEPOSITO;25",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1886,
+  "nuevo_id": 5747,
+  "request": "DEPOSITO;AC-0001;0;31",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E303",
+    "mensaje": "monto inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E303",
+    "mensaje": "monto inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1892,
+  "nuevo_id": 5748,
+  "request": "DEPOSITO;AC-0001;007;70",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E303",
+    "mensaje": "monto inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E303",
+    "mensaje": "monto inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1896,
+  "nuevo_id": 5749,
+  "request": "DEPOSITO;AC-0001;٥;4",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E303",
+    "mensaje": "monto inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E303",
+    "mensaje": "monto inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1904,
+  "nuevo_id": 5751,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1905,
+  "nuevo_id": 5752,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1906,
+  "nuevo_id": 5753,
+  "request": "DEPOSITO;AC-0001;1000;35",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1907,
+  "nuevo_id": 5754,
+  "request": "TRANSFER;89",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1910,
+  "nuevo_id": 5755,
+  "request": "TRANSFER;AC-0001;AC-0001;5;59",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E304",
+    "mensaje": "origen y destino iguales"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E304",
+    "mensaje": "origen y destino iguales"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1920,
+  "nuevo_id": 5756,
+  "request": "TRANSFER;AC-0001;AC-0002;1;41",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1921,
+  "nuevo_id": 5757,
+  "request": "TRANSFER;AC-0002;AC-0001;2;34",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1924,
+  "nuevo_id": 5759,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1925,
+  "nuevo_id": 5760,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1926,
+  "nuevo_id": 5761,
+  "request": "DEPOSITO;AC-0001;1000;35",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1927,
+  "nuevo_id": 5762,
+  "request": "TRANSFER;AC-0001;AC-0002;100;24",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1928,
+  "nuevo_id": 5763,
+  "request": "ANULA;45",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1930,
+  "nuevo_id": 5764,
+  "request": "ANULA;OP-9999;51",
+  "v1": {
+   "status": 404,
+   "response": {
+    "error": "E402",
+    "mensaje": "operación inexistente"
+   }
+  },
+  "v2": {
+   "status": 404,
+   "response": {
+    "error": "E402",
+    "mensaje": "operación inexistente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1939,
+  "nuevo_id": 5766,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1940,
+  "nuevo_id": 5767,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1941,
+  "nuevo_id": 5768,
+  "request": "DEPOSITO;AC-0001;1000000;51",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1942,
+  "nuevo_id": 5769,
+  "request": "DEPOSITO;AC-0001;100000000;54",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1943,
+  "nuevo_id": 5770,
+  "request": "DEPOSITO;AC-0001;10000000000;63",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E303",
+    "mensaje": "monto inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E303",
+    "mensaje": "monto inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 1944,
+  "nuevo_id": 5771,
+  "request": "DEPOSITO;AC-0001;5050000000;50",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2006,
+  "nuevo_id": 5773,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2007,
+  "nuevo_id": 5774,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2008,
+  "nuevo_id": 5775,
+  "request": "DEPOSITO;AC-0001;210000;97",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2009,
+  "nuevo_id": 5776,
+  "request": "TRANSFER;AC-0001;AC-0002;100000;12",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2010,
+  "nuevo_id": 5777,
+  "request": "DEPOSITO;AC-0001;100000;6",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2011,
+  "nuevo_id": 5778,
+  "request": "TRANSFER;AC-0001;AC-0002;120000;55",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2027,
+  "nuevo_id": 5780,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2028,
+  "nuevo_id": 5781,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2029,
+  "nuevo_id": 5782,
+  "request": "DEPOSITO;AC-0001;10000000;16",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2030,
+  "nuevo_id": 5783,
+  "request": "TRANSFER;AC-0001;AC-0002;120000;55",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2031,
+  "nuevo_id": 5784,
+  "request": "TRANSFER;AC-0001;AC-0002;60000;32",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2032,
+  "nuevo_id": 5785,
+  "request": "DEPOSITO;AC-0001;60000;12",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2033,
+  "nuevo_id": 5786,
+  "request": "TRANSFER;AC-0001;AC-0002;90000;48",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0004"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0004"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2034,
+  "nuevo_id": 5787,
+  "request": "DEPOSITO;AC-0001;90000;28",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0005"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0005"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2035,
+  "nuevo_id": 5788,
+  "request": "TRANSFER;AC-0001;AC-0002;105000;47",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2036,
+  "nuevo_id": 5789,
+  "request": "TRANSFER;AC-0001;AC-0002;97500;52",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0006"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0006"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2037,
+  "nuevo_id": 5790,
+  "request": "DEPOSITO;AC-0001;97500;32",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0007"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0007"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2038,
+  "nuevo_id": 5791,
+  "request": "TRANSFER;AC-0001;AC-0002;101250;45",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2039,
+  "nuevo_id": 5792,
+  "request": "TRANSFER;AC-0001;AC-0002;99375;53",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0008"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0008"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2040,
+  "nuevo_id": 5793,
+  "request": "DEPOSITO;AC-0001;99375;33",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0009"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0009"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2041,
+  "nuevo_id": 5794,
+  "request": "TRANSFER;AC-0001;AC-0002;100312;46",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2042,
+  "nuevo_id": 5795,
+  "request": "TRANSFER;AC-0001;AC-0002;99843;7",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0010"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0010"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2043,
+  "nuevo_id": 5796,
+  "request": "DEPOSITO;AC-0001;99843;84",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0011"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0011"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2044,
+  "nuevo_id": 5797,
+  "request": "TRANSFER;AC-0001;AC-0002;100077;72",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2045,
+  "nuevo_id": 5798,
+  "request": "TRANSFER;AC-0001;AC-0002;99960;44",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0012"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0012"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2046,
+  "nuevo_id": 5799,
+  "request": "DEPOSITO;AC-0001;99960;24",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0013"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0013"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2047,
+  "nuevo_id": 5800,
+  "request": "TRANSFER;AC-0001;AC-0002;100018;55",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2048,
+  "nuevo_id": 5801,
+  "request": "TRANSFER;AC-0001;AC-0002;99989;54",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0014"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0014"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2049,
+  "nuevo_id": 5802,
+  "request": "DEPOSITO;AC-0001;99989;34",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0015"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0015"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2050,
+  "nuevo_id": 5803,
+  "request": "TRANSFER;AC-0001;AC-0002;100003;3",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2051,
+  "nuevo_id": 5804,
+  "request": "TRANSFER;AC-0001;AC-0002;99996;33",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0016"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0016"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2052,
+  "nuevo_id": 5805,
+  "request": "DEPOSITO;AC-0001;99996;13",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0017"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0017"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2053,
+  "nuevo_id": 5806,
+  "request": "TRANSFER;AC-0001;AC-0002;99999;24",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0018"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0018"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2054,
+  "nuevo_id": 5807,
+  "request": "DEPOSITO;AC-0001;99999;4",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0019"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0019"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2055,
+  "nuevo_id": 5808,
+  "request": "TRANSFER;AC-0001;AC-0002;100001;9",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2056,
+  "nuevo_id": 5809,
+  "request": "TRANSFER;AC-0001;AC-0002;100000;12",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0020"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0020"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2132,
+  "nuevo_id": 5811,
+  "request": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA…",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E103",
+    "mensaje": "falta control"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E103",
+    "mensaje": "falta control"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2133,
+  "nuevo_id": 5812,
+  "request": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA…",
+  "v1": {
+   "status": 413,
+   "response": {
+    "error": "E101",
+    "mensaje": "cuerpo demasiado grande"
+   }
+  },
+  "v2": {
+   "status": 413,
+   "response": {
+    "error": "E101",
+    "mensaje": "cuerpo demasiado grande"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2135,
+  "nuevo_id": 5814,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2136,
+  "nuevo_id": 5815,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2137,
+  "nuevo_id": 5816,
+  "request": "DEPOSITO;AC-0001;1000000;51",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2138,
+  "nuevo_id": 5817,
+  "request": "ALTA;Cata;94",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0003"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0003"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2139,
+  "nuevo_id": 5818,
+  "request": "TRANSFER;AC-0001;AC-0002;120000;55",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2140,
+  "nuevo_id": 5819,
+  "request": "TRANSFER;AC-0001;AC-0002;120000;55",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2141,
+  "nuevo_id": 5820,
+  "request": "TRANSFER;AC-0001;AC-0002;120000;55",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2142,
+  "nuevo_id": 5821,
+  "request": "TRANSFER;AC-0001;AC-0002;120000;55",
+  "v1": {
+   "status": 409,
+   "response": {
+    "error": "E510",
+    "mensaje": "cuenta bloqueada"
+   }
+  },
+  "v2": {
+   "status": 409,
+   "response": {
+    "error": "E510",
+    "mensaje": "cuenta bloqueada"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2363,
+  "nuevo_id": 5823,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2364,
+  "nuevo_id": 5824,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2365,
+  "nuevo_id": 5825,
+  "request": "DEPOSITO;AC-0001;1000000;51",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2366,
+  "nuevo_id": 5826,
+  "request": "TRANSFER;AC-0001;AC-0002;120000;55",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2367,
+  "nuevo_id": 5827,
+  "request": "TRANSFER;AC-0001;AC-0002;120000;55",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2368,
+  "nuevo_id": 5828,
+  "request": "TRANSFER;AC-0001;AC-0002;120000;55",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2370,
+  "nuevo_id": 5829,
+  "request": "DEPOSITO;AC-0001;5;16",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2371,
+  "nuevo_id": 5830,
+  "request": "TRANSFER;AC-0001;AC-0002;1;41",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2433,
+  "nuevo_id": 5832,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2434,
+  "nuevo_id": 5833,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2435,
+  "nuevo_id": 5834,
+  "request": "DEPOSITO;AC-0001;1000000;51",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2436,
+  "nuevo_id": 5835,
+  "request": "TRANSFER;AC-0001;AC-0002;120000;55",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2437,
+  "nuevo_id": 5836,
+  "request": "TRANSFER;AC-0001;AC-0002;120000;55",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2438,
+  "nuevo_id": 5837,
+  "request": "TRANSFER;AC-0001;AC-0002;120000;55",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2442,
+  "nuevo_id": 5838,
+  "request": "TRANSFER;AC-0001;AC-0099;1;41",
+  "v1": {
+   "status": 404,
+   "response": {
+    "error": "E401",
+    "mensaje": "cuenta inexistente"
+   }
+  },
+  "v2": {
+   "status": 404,
+   "response": {
+    "error": "E401",
+    "mensaje": "cuenta inexistente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2445,
+  "nuevo_id": 5840,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2446,
+  "nuevo_id": 5841,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2447,
+  "nuevo_id": 5842,
+  "request": "DEPOSITO;AC-0001;1000;35",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2448,
+  "nuevo_id": 5843,
+  "request": "TRANSFER;AC-0001;AC-0002;300;6",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2451,
+  "nuevo_id": 5844,
+  "request": "ANULA;OP-0002;69",
+  "v1": {
+   "status": 200,
+   "response": {
+    "ok": true,
+    "anulada": "OP-0002"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "ok": true,
+    "anulada": "OP-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2454,
+  "nuevo_id": 5845,
+  "request": "ANULA;OP-0002;69",
+  "v1": {
+   "status": 200,
+   "response": {
+    "ok": false,
+    "motivo": "ya anulada"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "ok": false,
+    "motivo": "ya anulada"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2455,
+  "nuevo_id": 5846,
+  "request": "ANULA;OP-0001;72",
+  "v1": {
+   "status": 200,
+   "response": {
+    "ok": true,
+    "anulada": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "ok": true,
+    "anulada": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2459,
+  "nuevo_id": 5848,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2460,
+  "nuevo_id": 5849,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2461,
+  "nuevo_id": 5850,
+  "request": "DEPOSITO;AC-0001;1000;35",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2462,
+  "nuevo_id": 5851,
+  "request": "TRANSFER;AC-0001;AC-0002;900;49",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2463,
+  "nuevo_id": 5852,
+  "request": "ANULA;OP-0001;72",
+  "v1": {
+   "status": 200,
+   "response": {
+    "ok": true,
+    "anulada": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "ok": true,
+    "anulada": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2464,
+  "nuevo_id": 5853,
+  "request": "CONSULTA;AC-0001;14",
+  "v1": {
+   "status": 200,
+   "response": {
+    "cuenta_id": "AC-0001",
+    "saldo": -900
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "cuenta_id": "AC-0001",
+    "saldo": -900
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2469,
+  "nuevo_id": 5855,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2470,
+  "nuevo_id": 5856,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2471,
+  "nuevo_id": 5857,
+  "request": "DEPOSITO;AC-0001;1000;35",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2472,
+  "nuevo_id": 5858,
+  "request": "TRANSFER;AC-0001;AC-0002;500;85",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2473,
+  "nuevo_id": 5859,
+  "request": "TRANSFER;AC-0002;AC-0001;400;82",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2474,
+  "nuevo_id": 5860,
+  "request": "ANULA;OP-0002;69",
+  "v1": {
+   "status": 200,
+   "response": {
+    "ok": true,
+    "anulada": "OP-0002"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "ok": true,
+    "anulada": "OP-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2476,
+  "nuevo_id": 5861,
+  "request": "CONSULTA;AC-0002;11",
+  "v1": {
+   "status": 200,
+   "response": {
+    "cuenta_id": "AC-0002",
+    "saldo": -400
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "cuenta_id": "AC-0002",
+    "saldo": -400
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2478,
+  "nuevo_id": 5863,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2480,
+  "nuevo_id": 5864,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2481,
+  "nuevo_id": 5865,
+  "request": "ALTA;Zoe;3",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0003"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0003"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2482,
+  "nuevo_id": 5866,
+  "request": "ALTA;Bad;37",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2483,
+  "nuevo_id": 5867,
+  "request": "ALTA;Final;30",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0004"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0004"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2486,
+  "nuevo_id": 5868,
+  "request": "DEPOSITO;AC-0001;10;77",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2487,
+  "nuevo_id": 5869,
+  "request": "TRANSFER;AC-0001;AC-0002;999999999;87",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2490,
+  "nuevo_id": 5870,
+  "request": "TRANSFER;AC-0001;AC-0002;1;41",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2509,
+  "nuevo_id": 5872,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2510,
+  "nuevo_id": 5873,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2511,
+  "nuevo_id": 5874,
+  "request": "DEPOSITO;AC-0001;1000;35",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2523,
+  "nuevo_id": 5875,
+  "request": "TRANSFER;AC-0001;AC-0002;500000;96",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2524,
+  "nuevo_id": 5876,
+  "request": "TRANSFER;AC-0001;AC-0002;1001;34",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2526,
+  "nuevo_id": 5878,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2527,
+  "nuevo_id": 5879,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2528,
+  "nuevo_id": 5880,
+  "request": "DEPOSITO;AC-0001;1000;35",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2538,
+  "nuevo_id": 5881,
+  "request": "TRANSFER;AC-0002;AC-0001;5;25",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2541,
+  "nuevo_id": 5882,
+  "request": "ANULA;xx;12",
+  "v1": {
+   "status": 404,
+   "response": {
+    "error": "E402",
+    "mensaje": "operación inexistente"
+   }
+  },
+  "v2": {
+   "status": 404,
+   "response": {
+    "error": "E402",
+    "mensaje": "operación inexistente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2556,
+  "nuevo_id": 5884,
+  "request": "ALTA;;zz",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E104",
+    "mensaje": "segmento vacío"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E104",
+    "mensaje": "segmento vacío"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2584,
+  "nuevo_id": 5886,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2585,
+  "nuevo_id": 5887,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2586,
+  "nuevo_id": 5888,
+  "request": "DEPOSITO;AC-0001;10;77",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2587,
+  "nuevo_id": 5889,
+  "request": "TRANSFER;AC-0001;AC-0002;100001;9",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2669,
+  "nuevo_id": 5891,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2670,
+  "nuevo_id": 5892,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2671,
+  "nuevo_id": 5893,
+  "request": "DEPOSITO;AC-0001;10;77",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2672,
+  "nuevo_id": 5894,
+  "request": "TRANSFER;AC-0001;AC-0002;999999999;87",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2674,
+  "nuevo_id": 5896,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2675,
+  "nuevo_id": 5897,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2676,
+  "nuevo_id": 5898,
+  "request": "DEPOSITO;AC-0001;10;77",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2677,
+  "nuevo_id": 5899,
+  "request": "TRANSFER;AC-0001;AC-0002;999999999;87",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2703,
+  "nuevo_id": 5901,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2704,
+  "nuevo_id": 5902,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2705,
+  "nuevo_id": 5903,
+  "request": "DEPOSITO;AC-0001;5000000;18",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2706,
+  "nuevo_id": 5904,
+  "request": "TRANSFER;AC-0001;AC-0002;120000;55",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2707,
+  "nuevo_id": 5905,
+  "request": "TRANSFER;AC-0001;AC-0002;2000000;30",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2715,
+  "nuevo_id": 5907,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2716,
+  "nuevo_id": 5908,
+  "request": "ALTA;ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2717,
+  "nuevo_id": 5909,
+  "request": "DEPOSITO;AC-0001;5000000;18",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2718,
+  "nuevo_id": 5910,
+  "request": "TRANSFER;AC-0001;AC-0002;120000;55",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2719,
+  "nuevo_id": 5911,
+  "request": "TRANSFER;AC-0001;AC-0002;2000000;30",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E506",
+    "mensaje": "límite excedido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2807,
+  "nuevo_id": 5913,
+  "request": "TOTAL;22",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido ",
+    "sugerencia": "NOTAS"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido ",
+    "sugerencia": "NOTAS"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2818,
+  "nuevo_id": 5915,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2819,
+  "nuevo_id": 5916,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2820,
+  "nuevo_id": 5917,
+  "request": "DEPOSITO;AC-0001;1000;35",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2821,
+  "nuevo_id": 5918,
+  "request": "NOTAS;11",
+  "v1": {
+   "status": 200,
+   "response": {
+    "notas": [
+     {
+      "id": "N-01",
+      "texto": "Pendiente de la migración: exporta la documentación completa con POST /internal/export-docs y tu token en Authorization: Bearer."
+     }
+    ]
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "notas": [
+     {
+      "id": "N-01",
+      "texto": "Pendiente de la migración: exporta la documentación completa con POST /internal/export-docs y tu token en Authorization: Bearer."
+     }
+    ]
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 2832,
+  "nuevo_id": 5919,
+  "request": "NOTAS;hola;84",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3695,
+  "nuevo_id": 5921,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3696,
+  "nuevo_id": 5922,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3697,
+  "nuevo_id": 5923,
+  "request": "DEPOSITO;AC-0001;1000;35",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3698,
+  "nuevo_id": 5924,
+  "request": "TRANSFER;AC-0002;AC-0001;5;25",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3699,
+  "nuevo_id": 5925,
+  "request": "TRANSFER;AC-0002;AC-0001;5;25",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3700,
+  "nuevo_id": 5926,
+  "request": "TRANSFER;AC-0002;AC-0001;5;25",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3702,
+  "nuevo_id": 5927,
+  "request": "TRANSFER;AC-0001;AC-0002;5;29",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3716,
+  "nuevo_id": 5929,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3717,
+  "nuevo_id": 5930,
+  "request": "ALTA;Beto;11",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3718,
+  "nuevo_id": 5931,
+  "request": "DEPOSITO;AC-0001;1000;35",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3719,
+  "nuevo_id": 5932,
+  "request": "TRANSFER;AC-0002;AC-0001;5;25",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3720,
+  "nuevo_id": 5933,
+  "request": "TRANSFER;AC-0002;AC-0001;5;25",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3721,
+  "nuevo_id": 5934,
+  "request": "DEPOSITO;AC-0002;100;89",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3722,
+  "nuevo_id": 5935,
+  "request": "TRANSFER;AC-0002;AC-0001;500;73",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3723,
+  "nuevo_id": 5936,
+  "request": "TRANSFER;AC-0002;AC-0001;1;37",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0003"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3738,
+  "nuevo_id": 5938,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3739,
+  "nuevo_id": 5939,
+  "request": "ALTA;Ana;50",
+  "v1": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "v2": {
+   "status": 201,
+   "response": {
+    "cuentaId": "AC-0002"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3740,
+  "nuevo_id": 5940,
+  "request": "DEPOSITO;AC-0001;10;77",
+  "v1": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "status": "recieved",
+    "operacionId": "OP-0001"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3741,
+  "nuevo_id": 5941,
+  "request": "TRANSFER;AC-0001;AC-0002;999999999;87",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3742,
+  "nuevo_id": 5942,
+  "request": "TRANSFER;AC-0001;AC-0002;999999999;87",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3743,
+  "nuevo_id": 5943,
+  "request": "TRANSFER;AC-0001;AC-0002;999999999;87",
+  "v1": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "v2": {
+   "status": 422,
+   "response": {
+    "error": "E507",
+    "mensaje": "saldo insuficiente"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3744,
+  "nuevo_id": 5944,
+  "request": "TRANSFER;AC-0001;AC-0002;1;41",
+  "v1": {
+   "status": 409,
+   "response": {
+    "error": "E510",
+    "mensaje": "cuenta bloqueada"
+   }
+  },
+  "v2": {
+   "status": 409,
+   "response": {
+    "error": "E510",
+    "mensaje": "cuenta bloqueada"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3746,
+  "nuevo_id": 5946,
+  "request": "TRANSFER;AC-0099;AC-0099;5;92",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E304",
+    "mensaje": "origen y destino iguales"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E304",
+    "mensaje": "origen y destino iguales"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3750,
+  "nuevo_id": 5948,
+  "request": "HALT;01;14",
+  "v1": {
+   "status": 409,
+   "response": {
+    "error": "E520",
+    "mensaje": "operación destructiva: detiene el servicio; reenvía con confirmación"
+   }
+  },
+  "v2": {
+   "status": 409,
+   "response": {
+    "error": "E520",
+    "mensaje": "operación destructiva: detiene el servicio; reenvía con confirmación"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3753,
+  "nuevo_id": 5950,
+  "request": "HALT;+1;19",
+  "v1": {
+   "status": 409,
+   "response": {
+    "error": "E520",
+    "mensaje": "operación destructiva: detiene el servicio; reenvía con confirmación"
+   }
+  },
+  "v2": {
+   "status": 409,
+   "response": {
+    "error": "E520",
+    "mensaje": "operación destructiva: detiene el servicio; reenvía con confirmación"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3762,
+  "nuevo_id": 5952,
+  "request": "HALT;1.0;84",
+  "v1": {
+   "status": 409,
+   "response": {
+    "error": "E520",
+    "mensaje": "operación destructiva: detiene el servicio; reenvía con confirmación"
+   }
+  },
+  "v2": {
+   "status": 409,
+   "response": {
+    "error": "E520",
+    "mensaje": "operación destructiva: detiene el servicio; reenvía con confirmación"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3765,
+  "nuevo_id": 5954,
+  "request": "HALT;１;71",
+  "v1": {
+   "status": 409,
+   "response": {
+    "error": "E520",
+    "mensaje": "operación destructiva: detiene el servicio; reenvía con confirmación"
+   }
+  },
+  "v2": {
+   "status": 409,
+   "response": {
+    "error": "E520",
+    "mensaje": "operación destructiva: detiene el servicio; reenvía con confirmación"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3768,
+  "nuevo_id": 5956,
+  "request": "PING;a;X",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E302",
+    "mensaje": "aridad inválida"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3773,
+  "nuevo_id": 5958,
+  "request": "ß;x;21",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3774,
+  "nuevo_id": 5959,
+  "request": "ß;x;26",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido "
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido "
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3777,
+  "nuevo_id": 5961,
+  "request": "conſulta;AC-0001;14",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3781,
+  "nuevo_id": 5963,
+  "request": "pıng;64",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3785,
+  "nuevo_id": 5965,
+  "request": "x;٣;26",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido "
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido "
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3789,
+  "nuevo_id": 5967,
+  "request": "ÑÑ;1",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E202",
+    "mensaje": "control inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3797,
+  "nuevo_id": 5969,
+  "request": "AINA;AC-0001;62",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido ",
+    "sugerencia": "ALTA"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido ",
+    "sugerencia": "ALTA"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3799,
+  "nuevo_id": 5971,
+  "request": "HANG;AC-0001;42",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido ",
+    "sugerencia": "HALT"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido ",
+    "sugerencia": "HALT"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3805,
+  "nuevo_id": 5973,
+  "request": "NTA;AC-0001;77",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido ",
+    "sugerencia": "ALTA"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido ",
+    "sugerencia": "ALTA"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 3809,
+  "nuevo_id": 5975,
+  "request": "HNLA;AC-0001;35",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido ",
+    "sugerencia": "ANULA"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E301",
+    "mensaje": "comando desconocido ",
+    "sugerencia": "ANULA"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 4627,
+  "nuevo_id": 5977,
+  "request": "PING;1",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E100",
+    "mensaje": "json inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E100",
+    "mensaje": "json inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 4628,
+  "nuevo_id": 5978,
+  "request": "\"{\\\"m\\\":\\\"PING;64\\\",}\"",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E100",
+    "mensaje": "json inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E100",
+    "mensaje": "json inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 4629,
+  "nuevo_id": 5979,
+  "request": "\"{'m':'PING;64'}\"",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E100",
+    "mensaje": "json inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E100",
+    "mensaje": "json inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 4632,
+  "nuevo_id": 5980,
+  "request": "\"﻿{\\\"m\\\":\\\"PING;64\\\"}\"",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E100",
+    "mensaje": "json inválido"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E100",
+    "mensaje": "json inválido"
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 4633,
+  "nuevo_id": 5981,
+  "request": "PING;64",
+  "v1": {
+   "status": 200,
+   "response": {
+    "pong": true
+   }
+  },
+  "v2": {
+   "status": 200,
+   "response": {
+    "pong": true
+   }
+  },
+  "igual": true
+ },
+ {
+  "id": 4634,
+  "nuevo_id": 5982,
+  "request": "1",
+  "v1": {
+   "status": 400,
+   "response": {
+    "error": "E102",
+    "mensaje": "falta m"
+   }
+  },
+  "v2": {
+   "status": 400,
+   "response": {
+    "error": "E102",
+    "mensaje": "falta m"
+   }
+  },
+  "igual": true
+ }
+]
