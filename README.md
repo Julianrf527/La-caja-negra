@@ -19,11 +19,21 @@ Diseño y decisiones: [docs/diseno.md](docs/diseno.md). Especificación exacta (
 | `tests/unit/` | Control, orden de errores, sugerencia y estado. |
 | `tests/regresion/` | Reproduce `test-original-app/experimentos.jsonl` contra la app. |
 | `tests/humo_local.py` | Pruebas de humo por HTTP real contra un servidor levantado. |
-| `tools/` | Scripts que comparan el reemplazo con el original (`rutas.py`, `diferencial.py`, `confirmar.py`, `profundidad.py`); usan `test-original-app/helper`, nunca los importa `app/`. |
+| `tools/` | Scripts propios que comparan el reemplazo con el original (rutas, pruebas diferenciales, confirmación de pendientes y la investigación del cambio v2 `fr0153_*`); usan `test-original-app/helper`, nunca los importa `app/`. |
 | `test-original-app/` | Exploración del original: reglas del reto, cliente, log de experimentos y hallazgos. |
 | `docs/` | Diseño, anexo técnico y diagrama de arquitectura. |
 
 Nota: el esquema de carpetas de la sección 4 de `docs/diseno.md` es anterior; manda esta estructura.
+
+## Entregables del reto
+
+| Entregable | Archivo |
+| --- | --- |
+| Entrypoint (desplegado) | `https://la-caja-negra-production.up.railway.app` (perfil v2) |
+| Especificación del servicio | [test-original-app/hallazgos.md](test-original-app/hallazgos.md) |
+| Log de experimentos | [test-original-app/experimentos.jsonl](test-original-app/experimentos.jsonl) |
+
+La carpeta `entrega/` (no versionada) tiene copias de la especificación y el log con nombres listos para subir.
 
 ## Instalar
 
@@ -55,17 +65,13 @@ pytest tests/regresion         # imprime el % de coincidencia con el log y los i
 TOKEN_EQUIPO=mi-token python tests/humo_local.py   # humo contra la app ya levantada en :8000
 ```
 
-La regresión envía cada línea del log con su método, ruta y auth, respetando los resets, y compara status y cuerpo con las reglas del reto. Excluye una línea que el log no puede representar (#248, ver el anexo, sección 9).
+La regresión envía cada línea del log con su método, ruta y auth, respetando los resets, y compara status y cuerpo con las reglas del reto. Detecta el punto en que el original cambió a v2 y reproduce cada línea contra su perfil (v1 antes del cambio, v2 después). Excluye cuatro líneas que el log no puede representar con fidelidad (#248, #3437, #3645, #4637; ver el anexo, sección 9).
 
 ## Cambiar el perfil de reglas
 
-Todo lo que puede cambiar si el original cambia (mensajes, códigos, límites, orden de validación) está en `app/config/reglas.py` dentro de `PERFILES`. Para un cambio, añade un perfil que herede de `v1` y sobrescriba solo lo que cambie:
+Todo lo que puede cambiar si el original cambia (mensajes, códigos, límites, orden de validación) está en `app/config/reglas.py` dentro de `PERFILES`. Un perfil hereda de otro con `"hereda"` y sobrescribe solo lo que cambie; se activa con la variable `VERSION_REGLAS` (por defecto `v1`).
 
-```python
-PERFILES["v2"] = {"hereda": "v1", "limites": {"limite_transfer": 50000}}
-```
-
-y actívalo con la variable de entorno `VERSION_REGLAS=v2` (por defecto `v1`).
+El original **cambió una vez durante el día** (ver sección 6 de la especificación). Ese cambio ya está implementado en el perfil `v2`, que hereda de `v1` y sobrescribe tres cosas: el límite de TRANSFER (100000 → 50000), el formato del saldo en CONSULTA (entero → texto `"X.XX"`) y E510 (409 → 423 con el campo `intentos`). **En producción (Railway) corre `VERSION_REGLAS=v2`.** Si el original volviera a cambiar, se añade un perfil nuevo que herede de `v2`.
 
 ## Despliegue en Railway
 
