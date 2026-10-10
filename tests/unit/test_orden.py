@@ -39,9 +39,29 @@ def test_e001_antes_que_e101_e100_e102(client):
         assert (r.status_code, r.json()["error"]) == (401, "E001")
 
 
+@pytest.mark.parametrize("cabeceras", [
+    {}, {"Authorization": "Bearer falso"}, {"Authorization": "Bearer"}, {"Authorization": "Basic x"},
+    {"Authorization": f"bearer {TOKEN}"}, {"Authorization": f"Bearer {TOKEN}"},
+])
+def test_health_es_publico(client, cabeceras):
+    """GET /health responde siempre 200 {"ok": true}, con o sin Authorization y con cualquier token."""
+    r = client.get("/health", headers=cabeceras)
+    assert (r.status_code, r.json()) == (200, {"ok": True})
+
+
+def test_health_publico_no_cambia_el_resto(client, monkeypatch):
+    monkeypatch.delenv("TOKEN_EQUIPO")  # ni siquiera hace falta que haya token configurado
+    assert client.get("/health").json() == {"ok": True}
+    monkeypatch.setenv("TOKEN_EQUIPO", TOKEN)
+    assert client.post("/health").status_code == 404 and client.head("/health").status_code == 404
+    assert client.post("/msg", content=b"{}").status_code == 401
+    assert client.post("/__reset").status_code == 401
+    assert client.get("/nope").status_code == 404
+
+
 @pytest.mark.parametrize("auth", ["Bearer falso", f"bearer {TOKEN}", TOKEN, "Bearer", f"Basic {TOKEN}", f"Bearer  {TOKEN}"])
 def test_auth_variantes(client, auth):
-    for ruta, metodo in (("/msg", "POST"), ("/health", "GET"), ("/__reset", "POST")):
+    for ruta, metodo in (("/msg", "POST"), ("/__reset", "POST")):  # /health es público (ver test_health_es_publico)
         r = client.request(metodo, ruta, headers={"Authorization": auth})
         assert (r.status_code, r.json()) == (401, {"error": "E001", "mensaje": "no autorizado"})
 

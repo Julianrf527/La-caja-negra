@@ -33,6 +33,10 @@ PERFILES: dict[str, dict] = {
         },
         # ---- autenticación ----
         "auth": {"esquema": "Bearer", "variable_token": "TOKEN_EQUIPO"},
+        # Rutas exentas de auth por contrato del entrypoint: GET /health responde siempre 200 {"ok": true},
+        # con o sin Authorization y con cualquier token. Es la ÚNICA excepción: el original da 401 (#109)
+        # y el resto de rutas sigue replicándolo.
+        "rutas_publicas": ["health"],
         # ---- errores: código -> status y mensaje exactos (ojo: E301 lleva espacio final) ----
         "errores": {
             "E404": {"status": 404, "mensaje": "ruta desconocida"},

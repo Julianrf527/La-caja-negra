@@ -63,12 +63,15 @@ def _iguales(esperado, status_esperado: int, r) -> bool:
 def test_regresion_contra_experimentos(capsys, monkeypatch):
     monkeypatch.setattr("app.captura.registrar", lambda *a, **k: None)  # sin ruido de CAPTURA
     lineas = [json.loads(l) for l in LOG.read_text(encoding="utf-8").splitlines() if l.strip()]
-    fallos, comparados = [], 0
+    fallos, comparados, sin_token_health = [], 0, []
     with TestClient(app) as client:
         for e in lineas:
             cuerpo = _cuerpo(e)
             r = client.request(e.get("metodo", "POST"), e.get("ruta", "/msg"), content=cuerpo, headers=_cabeceras(e))
             if e["id"] in EXCLUIDOS:
+                continue
+            if (e.get("metodo"), e.get("ruta")) == ("GET", "/health") and e["status"] == 401:
+                sin_token_health.append(e["id"])  # /health es público por contrato; el original daba 401
                 continue
             comparados += 1
             if not _iguales(e["response"], e["status"], r):
@@ -76,7 +79,7 @@ def test_regresion_contra_experimentos(capsys, monkeypatch):
 
     pct = 100 * (comparados - len(fallos)) / comparados
     with capsys.disabled():
-        print(f"\nREGRESIÓN: {comparados - len(fallos)}/{comparados} coinciden ({pct:.2f} %); excluidos: {sorted(EXCLUIDOS)}")
+        print(f"\nREGRESIÓN: {comparados - len(fallos)}/{comparados} coinciden ({pct:.2f} %); excluidos: {sorted(EXCLUIDOS)}; GET /health sin token (público por contrato, 200): {len(sin_token_health)} líneas omitidas")
         print("ids que fallan:", [e["id"] for e, _ in fallos])
         for e, r in fallos[:40]:
             req = e["request"]["m"] if isinstance(e["request"], dict) and "m" in e["request"] else str(e["request"])[:60]
