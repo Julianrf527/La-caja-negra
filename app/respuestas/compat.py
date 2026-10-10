@@ -29,6 +29,13 @@ class Salida:
     json: Any | None
 
 
+def _formato_decimal(valor: int, escala: int, decimales: int) -> str:
+    """Entero de centavos -> texto 'X.XX' (v2). Ej: 12345 -> '123.45', -1 -> '-0.01'."""
+    signo = "-" if valor < 0 else ""
+    entero, resto = divmod(abs(valor), escala)
+    return f"{signo}{entero}.{resto:0{decimales}d}"
+
+
 def _salida(status: int, objeto: Any) -> Salida:
     texto = json.dumps(objeto, ensure_ascii=False, separators=(",", ":"))
     return Salida(status, texto.encode("utf-8"), objeto)
@@ -64,7 +71,11 @@ def render(resultado: "Exito | Fallo", perfil: dict) -> Salida:
     elif t == "cuenta_creada":
         cuerpo = {r["clave_id"]: d["id"]}
     elif t == "saldo":
-        cuerpo = {r["clave_id"]: d["id"], r["clave_saldo"]: d["saldo"]}
+        saldo = d["saldo"]
+        fmt = r.get("formato_saldo")  # v2: saldo como texto 'X.XX'; v1: entero
+        if fmt:
+            saldo = _formato_decimal(saldo, fmt["escala"], fmt["decimales"])
+        cuerpo = {r["clave_id"]: d["id"], r["clave_saldo"]: saldo}
     elif t == "operacion_recibida":
         cuerpo = {r["clave_estado"]: r["texto_estado"], r["clave_id"]: d["id"]}
     elif t == "anulada":

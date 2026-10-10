@@ -32,6 +32,8 @@ INEX_CUENTA = ["AC-0099", "AC-9999", "ac-0001", "AC-1", "AC-0001 ", "OP-0001", "
 INEX_OP = ["OP-0099", "OP-9999", "op-0001", "OP-1", "AC-0001", "0001", "OP-0000"]
 CUERPOS_RAW = ["", "{", "null", "[]", "{}", '{"m":1}', '{"m":null}', '{"m":""}', '{"M":"PING;1"}',
                '{"m":"PING;1","x":1}', '{"m":"PING;1","m":"PING;2"}', "  {\"m\":\"PING;1\"}  ", "PING;1"]
+import os
+PREFIJO_HIP = os.environ.get("PREFIJO_HIP", "")  # p. ej. "FR-0153: " para marcar las requests de un incidente
 MONTO_RE = re.compile(r"[1-9][0-9]{0,9}")
 
 
@@ -265,11 +267,11 @@ def main() -> int:
         try:
             for i in range(a.desde, a.desde + a.n):
                 pasos = secuencia(a.semilla, i)
-                c.reset(f"diferencial semilla={a.semilla} seq={i}: estado inicial ({len(pasos)} pasos)")
+                c.reset(f"{PREFIJO_HIP}diferencial semilla={a.semilla} seq={i}: estado inicial ({len(pasos)} pasos)")
                 local.reset()
                 historia: list[str] = []
                 for j, p in enumerate(pasos):
-                    hip = f"diferencial semilla={a.semilla} seq={i} paso={j} [{p['tag']}]: ¿el original responde igual que el reemplazo?"
+                    hip = f"{PREFIJO_HIP}diferencial semilla={a.semilla} seq={i} paso={j} [{p['tag']}]: ¿el original responde igual que el reemplazo?"
                     if p["t"] == "msg":
                         e = c.msg(p["v"], hip)
                         s_l, r_l = local.msg_crudo(json.dumps({"m": p["v"]}, ensure_ascii=False))

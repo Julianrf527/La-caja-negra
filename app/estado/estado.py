@@ -9,6 +9,8 @@ class Cuenta:
     saldo: int = 0
     fallos_seguidos: int = 0
     bloqueada: bool = False
+    # Nº de E510 seguidos de esta cuenta como origen (v2). Se reinicia al desbloquear con depósito.
+    intentos_bloqueo: int = 0
 
 
 @dataclass

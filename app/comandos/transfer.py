@@ -36,6 +36,14 @@ _CHECKS = {"E303": _E303, "E304": _E304, "E401": _E401, "E510": _E510, "E506": _
 def handler(c: Contexto):
     for codigo in c.perfil["comandos"]["TRANSFER"]["validaciones"]:
         if _CHECKS[codigo](c):
+            if codigo == "E510":
+                # La cuenta ya está bloqueada: contamos este intento. El campo "intentos"
+                # solo se expone si el perfil lo define (v2); en v1 no existe (confirmado: #7570-#7574).
+                origen = c.estado.cuentas[c.args[0]]
+                origen.intentos_bloqueo += 1
+                campo = c.perfil["errores"]["E510"].get("campo_contador")
+                extra = {campo: origen.intentos_bloqueo} if campo else {}
+                return Fallo(codigo, extra)
             if codigo in c.perfil["fallos_que_bloquean"]:
                 origen = c.estado.cuentas[c.args[0]]
                 origen.fallos_seguidos += 1
