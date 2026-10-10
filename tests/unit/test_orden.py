@@ -55,13 +55,31 @@ def test_health_publico_no_cambia_el_resto(client, monkeypatch):
     monkeypatch.setenv("TOKEN_EQUIPO", TOKEN)
     assert client.post("/health").status_code == 404 and client.head("/health").status_code == 404
     assert client.post("/msg", content=b"{}").status_code == 401
-    assert client.post("/__reset").status_code == 401
     assert client.get("/nope").status_code == 404
 
 
+@pytest.mark.parametrize("cabeceras", [
+    {}, {"Authorization": ""}, {"Authorization": "Bearer falso"}, {"Authorization": "Bearer"}, {"Authorization": "Basic x"},
+    {"Authorization": f"bearer {TOKEN}"}, {"Authorization": f"Bearer {TOKEN}"},
+])
+def test_reset_es_publico_y_reinicia_el_estado(client, api, cabeceras):
+    """POST /__reset ejecuta el reset (200 {"ok": true}) con o sin Authorization y con cualquier token."""
+    assert api.msg("ALTA;Ana").json() == {"cuentaId": "AC-0001"}
+    api.msg("DEPOSITO;AC-0001;5")
+    api.msg("HALT;1")  # dejarlo detenido: el reset también debe levantarlo
+    r = client.post("/__reset", headers=cabeceras)
+    assert (r.status_code, r.json()) == (200, {"ok": True})
+    assert api.msg("ALTA;Ana").json() == {"cuentaId": "AC-0001"}  # contadores y estado de nuevo en el inicio
+    assert api.msg("DEPOSITO;AC-0001;5").json()["operacionId"] == "OP-0001"
+
+
+def test_reset_publico_solo_para_post(client):
+    assert client.get("/__reset").status_code == 404 and client.put("/__reset").status_code == 404
+    assert client.head("/__reset").status_code == 404
+
 @pytest.mark.parametrize("auth", ["Bearer falso", f"bearer {TOKEN}", TOKEN, "Bearer", f"Basic {TOKEN}", f"Bearer  {TOKEN}"])
 def test_auth_variantes(client, auth):
-    for ruta, metodo in (("/msg", "POST"), ("/__reset", "POST")):  # /health es público (ver test_health_es_publico)
+    for ruta, metodo in (("/msg", "POST"),):  # /health y /__reset son públicos (ver test_health_es_publico, test_reset_es_publico_...)
         r = client.request(metodo, ruta, headers={"Authorization": auth})
         assert (r.status_code, r.json()) == (401, {"error": "E001", "mensaje": "no autorizado"})
 
