@@ -31,7 +31,7 @@ Formato de `m`: `COMANDO;arg1;…;control`. El último segmento es el control.
 | IN-03 | Si N es múltiplo de 97 la fórmula da 1, pero **ningún control (0–97) es aceptado**: siempre E202. Esos cuerpos (p. ej. `RETIRA`, `ALTA;HD`, `ALTA;KY`, `ALTA;LV`, `DEPOSITO;AC-0099;0`) no se pueden enviar. | 1728–1823, 1825–1836, 1499, 2518 | P |
 | IN-04 | El control se compara como texto de 1 o 2 dígitos, sin signo ni cero a la izquierda: `02` → E202 aunque el valor sea 2. Más de 2 dígitos, signo, espacio, punto, hexadecimal, unicode o letras → E201 `control mal formado`. | 1711–1721, 1664, 1725, 285 | C |
 | IN-05 | Controles 97, 98 y 99 que no son el correcto → E202; 100 → E201. 97 no es comodín. | 1722–1725 | C |
-| IN-06 | El comando se pasa a mayúsculas para reconocerlo (`CONSULTa`, `ping`, `PiNg` funcionan); el control tampoco distingue mayúsculas en todo el cuerpo. | 11, 281, 282 | C |
+| IN-06 | El comando se pasa a mayúsculas para reconocerlo (`CONSULTa`, `ping`, `PiNg` funcionan); el control tampoco distingue mayúsculas en todo el cuerpo. | 14, 281, 282 | C |
 | IN-07 | `PING` no valida el control: acepta cualquier último segmento (`X`, `-1`, `64.0`, `٦٤`, `0x40`…), salvo vacío (`PING;` → E104). | 267–278 | C |
 | IN-08 | Los caracteres que no son letra ni dígito no entran en el control (acentos, `ñ`, espacios, guiones, `;`). | 1850–1857, 2557, 1561 | C |
 | IN-09 | Sin `;` (nada que sea control), `m` vacío o solo espacios → E103 `falta control`. | 245, 263, 265, 266, 2551 | C |
